@@ -15,10 +15,10 @@ public class RenderJSItemDecoratorHandler {
     @HideFromJS
     private static final RenderJSItemDecoratorHandler instance = new RenderJSItemDecoratorHandler();
 
-    private static final Map<Item,Map<String,RenderJSItemDecorator>> REGISTERED_ITEM_DECORATOR = new HashMap<>();
+    private static final Map<Item, Map<String, RenderJSItemDecorator>> REGISTERED_ITEM_DECORATOR = new HashMap<>();
 
     @Info("注册一个ItemDecorator,如果之前已经注册则返回之前注册的ItemDecorator")
-    public RenderJSItemDecorator register(Item item , String id , Consumer<RenderJSItemDecorator.renderContext> consumer){
+    public RenderJSItemDecorator register(Item item, String id, Consumer<RenderJSItemDecorator.renderContext> consumer) {
 
         RenderJSItemDecorator renderJSItemDecorator = new RenderJSItemDecorator(consumer);
         if (REGISTERED_ITEM_DECORATOR.containsKey(item) && REGISTERED_ITEM_DECORATOR.get(item).containsKey(id)) {
@@ -26,23 +26,23 @@ public class RenderJSItemDecoratorHandler {
         }
 
         if (!REGISTERED_ITEM_DECORATOR.containsKey(item)) {
-            REGISTERED_ITEM_DECORATOR.put(item,new HashMap<>());
+            REGISTERED_ITEM_DECORATOR.put(item, new HashMap<>());
         }
 
-        REGISTERED_ITEM_DECORATOR.get(item).put(id,renderJSItemDecorator);
+        REGISTERED_ITEM_DECORATOR.get(item).put(id, renderJSItemDecorator);
         return renderJSItemDecorator;
     }
+
     @HideFromJS
     public static RenderJSItemDecoratorHandler getInstance() {
         return instance;
     }
 
 
-
-    public static void RegisterItemDecorationsEvent (RegisterItemDecorationsEvent event){
-        REGISTERED_ITEM_DECORATOR.forEach((Item item, Map<String,RenderJSItemDecorator> map)->{
+    public static void RegisterItemDecorationsEvent(RegisterItemDecorationsEvent event) {
+        REGISTERED_ITEM_DECORATOR.forEach((Item item, Map<String, RenderJSItemDecorator> map) -> {
             Iterator<RenderJSItemDecorator> iterator = map.values().iterator();
-            if (iterator.hasNext()){
+            if (iterator.hasNext()) {
                 event.register(item, iterator.next());
             }
         });

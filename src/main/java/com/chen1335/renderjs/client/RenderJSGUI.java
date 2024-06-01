@@ -37,11 +37,12 @@ public class RenderJSGUI extends GuiComponent {
     public RenderJSGUI(Minecraft minecraft) {
         this.minecraft = minecraft;
     }
+
     @Info("添加render")
-    public void addRender(Consumer<RenderJSGUI.renderContext> consumer){
+    public void addRender(Consumer<RenderJSGUI.renderContext> consumer) {
         if (isReload) {
             RenderJSGUI.renderList.clear();
-            isReload=false;
+            isReload = false;
         }
         renderList.add(consumer);
     }
@@ -61,14 +62,17 @@ public class RenderJSGUI extends GuiComponent {
     public void drawCenteredStringJS(@NotNull PoseStack poseStack, Font font, Component component, int x, int y, int color) {
         GuiComponent.drawCenteredString(poseStack, font, component, x, y, color);
     }
+
     @Info("绘制有阴影字符串(PoseStack poseStack, Font font, Component component, int x, int y, int color)")
     public void drawShadow(PoseStack poseStack, Font font, Component component, int x, int y, int color) {
         font.drawShadow(poseStack, component, (float) x, (float) y, color);
     }
+
     @Info("绘制无阴影字符串(PoseStack poseStack, Font font, Component component, int x, int y, int color)")
     public void draw(PoseStack poseStack, Font font, Component component, int x, int y, int color) {
         font.draw(poseStack, component, (float) x, (float) y, color);
     }
+
     @Info("rgba颜色转10进制")
     public int rgbaColor(int r, int g, int b, int a) {
         int i = r << 16;

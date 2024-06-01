@@ -14,6 +14,7 @@ import java.util.function.Consumer;
 public class RenderJSItemDecorator implements IItemDecorator {
 
     private Consumer<renderContext> consumer;
+
     public RenderJSItemDecorator(Consumer<renderContext> consumer) {
         this.consumer = consumer;
     }
@@ -23,6 +24,7 @@ public class RenderJSItemDecorator implements IItemDecorator {
         this.consumer.accept(new renderContext(font, itemStack, xOffset, yOffset, blitOffset));
         return true;
     }
+
     @Info("注册的不满意?,使用这个来重新定义!")
     public void setRender(Consumer<renderContext> consumer) {
         this.consumer = consumer;
@@ -39,14 +41,14 @@ public class RenderJSItemDecorator implements IItemDecorator {
             this.font = font;
             this.itemStack = itemStack;
             this.xOffset = xOffset;
-            this.yOffset=yOffset;
+            this.yOffset = yOffset;
             this.blitOffset = blitOffset;
         }
     }
 
     @Info("一些包装好了的方法,虽然目前只有一个:(")
 
-    public static class easyRender{
+    public static class easyRender {
         @Info("纯色填充(int pX, int pY, int pWidth, int pHeight, int pRed, int pGreen, int pBlue, int pAlpha)")
         public static void fillRect(int pX, int pY, int pWidth, int pHeight, int pRed, int pGreen, int pBlue, int pAlpha) {
             Tesselator tesselator = Tesselator.getInstance();
