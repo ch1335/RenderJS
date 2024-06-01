@@ -57,15 +57,15 @@ public class RenderJSGUI extends GuiComponent {
         renderList.forEach(consumer -> consumer.accept(renderContext));
     }
 
-    @Info("绘制居中字符串")
+    @Info("绘制居中字符串(@NotNull PoseStack poseStack, Font font, Component component, int x, int y, int color)")
     public void drawCenteredStringJS(@NotNull PoseStack poseStack, Font font, Component component, int x, int y, int color) {
         GuiComponent.drawCenteredString(poseStack, font, component, x, y, color);
     }
-    @Info("绘制有阴影字符串")
+    @Info("绘制有阴影字符串(PoseStack poseStack, Font font, Component component, int x, int y, int color)")
     public void drawShadow(PoseStack poseStack, Font font, Component component, int x, int y, int color) {
         font.drawShadow(poseStack, component, (float) x, (float) y, color);
     }
-    @Info("绘制无阴影字符串")
+    @Info("绘制无阴影字符串(PoseStack poseStack, Font font, Component component, int x, int y, int color)")
     public void draw(PoseStack poseStack, Font font, Component component, int x, int y, int color) {
         font.draw(poseStack, component, (float) x, (float) y, color);
     }
@@ -77,7 +77,7 @@ public class RenderJSGUI extends GuiComponent {
         return i | (a << 24 & -16777216);
     }
 
-    @Info("绘制图片，需要与RenderSystem类配合使用")
+    @Info("绘制图片，需要与RenderSystem类配合使用,总图片大小默认256x256(@NotNull PoseStack poseStack, int x, int y, int uOffset, int vOffset, int uWidth, int vHeight)")
     @Override
     public void blit(@NotNull PoseStack poseStack, int x, int y, int uOffset, int vOffset, int uWidth, int vHeight) {
         super.blit(poseStack, x, y, uOffset, vOffset, uWidth, vHeight);

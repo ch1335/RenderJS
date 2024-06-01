@@ -1,6 +1,7 @@
 package com.chen1335.renderjs;
 
 import com.chen1335.renderjs.client.ModItemDecorator.RenderJSItemDecoratorHandler;
+import com.chen1335.renderjs.client.RenderJSWorldRender;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
@@ -46,8 +47,7 @@ public class Renderjs
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event)
         {
-            LOGGER.info("HELLO FROM CLIENT SETUP");
-            LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
+            RenderJSWorldRender.getInstance().init();
         }
     }
 }
