@@ -47,7 +47,7 @@ public class Renderjs
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event)
         {
-            RenderJSWorldRender.getInstance().init();
+
         }
     }
 }
