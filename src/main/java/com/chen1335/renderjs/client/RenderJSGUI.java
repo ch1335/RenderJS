@@ -16,6 +16,7 @@ import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.function.Consumer;
 
 @Mod.EventBusSubscriber(modid = Renderjs.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
@@ -55,7 +56,10 @@ public class RenderJSGUI extends GuiComponent {
 
     @HideFromJS
     private void render(renderContext renderContext) {
-        renderList.forEach(consumer -> consumer.accept(renderContext));
+        Iterator<Consumer<RenderJSGUI.renderContext>> iterator = renderList.iterator();
+        while (iterator.hasNext()) {
+            iterator.next().accept(renderContext);
+        }
     }
 
     @Info("绘制居中字符串(@NotNull PoseStack poseStack, Font font, Component component, int x, int y, int color)")
@@ -64,12 +68,12 @@ public class RenderJSGUI extends GuiComponent {
     }
 
     @Info("绘制有阴影字符串(PoseStack poseStack, Font font, Component component, int x, int y, int color)")
-    public void drawShadow(PoseStack poseStack, Font font, Component component, int x, int y, int color) {
+    public void drawShadowJS(PoseStack poseStack, Font font, Component component, int x, int y, int color) {
         font.drawShadow(poseStack, component, (float) x, (float) y, color);
     }
 
     @Info("绘制无阴影字符串(PoseStack poseStack, Font font, Component component, int x, int y, int color)")
-    public void draw(PoseStack poseStack, Font font, Component component, int x, int y, int color) {
+    public void drawJS(PoseStack poseStack, Font font, Component component, int x, int y, int color) {
         font.draw(poseStack, component, (float) x, (float) y, color);
     }
 
@@ -82,8 +86,7 @@ public class RenderJSGUI extends GuiComponent {
     }
 
     @Info("绘制图片，需要与RenderSystem类配合使用,总图片大小默认256x256(@NotNull PoseStack poseStack, int x, int y, int uOffset, int vOffset, int uWidth, int vHeight)")
-    @Override
-    public void blit(@NotNull PoseStack poseStack, int x, int y, int uOffset, int vOffset, int uWidth, int vHeight) {
+    public void blitJS(@NotNull PoseStack poseStack, int x, int y, int uOffset, int vOffset, int uWidth, int vHeight) {
         super.blit(poseStack, x, y, uOffset, vOffset, uWidth, vHeight);
     }
 

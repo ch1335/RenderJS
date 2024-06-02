@@ -3,6 +3,8 @@ package com.chen1335.renderjs.client.ModItemDecorator;
 import dev.latvian.mods.kubejs.typings.Info;
 import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.world.item.Item;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RegisterItemDecorationsEvent;
 
 import java.util.HashMap;
@@ -10,6 +12,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.function.Consumer;
 
+@OnlyIn(Dist.CLIENT)
 public class RenderJSItemDecoratorHandler {
 
     @HideFromJS

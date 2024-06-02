@@ -5,14 +5,17 @@ import com.mojang.blaze3d.vertex.*;
 import dev.latvian.mods.kubejs.typings.Info;
 import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.IItemDecorator;
 
 import java.util.function.Consumer;
 
+@OnlyIn(Dist.CLIENT)
 public class RenderJSItemDecorator implements IItemDecorator {
-
     private Consumer<renderContext> consumer;
 
     public RenderJSItemDecorator(Consumer<renderContext> consumer) {
@@ -44,23 +47,5 @@ public class RenderJSItemDecorator implements IItemDecorator {
             this.yOffset = yOffset;
             this.blitOffset = blitOffset;
         }
-    }
-
-    @Info("一些包装好了的方法,虽然目前只有一个:(")
-
-    public static class easyRender {
-        @Info("纯色填充(int pX, int pY, int pWidth, int pHeight, int pRed, int pGreen, int pBlue, int pAlpha)")
-        public static void fillRect(int pX, int pY, int pWidth, int pHeight, int pRed, int pGreen, int pBlue, int pAlpha) {
-            Tesselator tesselator = Tesselator.getInstance();
-            BufferBuilder pRenderer = tesselator.getBuilder();
-            RenderSystem.setShader(GameRenderer::getPositionColorShader);
-            pRenderer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-            pRenderer.vertex(pX, pY, 0.0D).color(pRed, pGreen, pBlue, pAlpha).endVertex();
-            pRenderer.vertex(pX, pY + pHeight, 0.0D).color(pRed, pGreen, pBlue, pAlpha).endVertex();
-            pRenderer.vertex(pX + pWidth, pY + pHeight, 0.0D).color(pRed, pGreen, pBlue, pAlpha).endVertex();
-            pRenderer.vertex(pX + pWidth, pY, 0.0D).color(pRed, pGreen, pBlue, pAlpha).endVertex();
-            BufferUploader.drawWithShader(pRenderer.end());
-        }
-
     }
 }

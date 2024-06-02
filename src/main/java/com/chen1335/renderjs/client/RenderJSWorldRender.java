@@ -2,11 +2,9 @@ package com.chen1335.renderjs.client;
 
 import com.chen1335.renderjs.Renderjs;
 import com.chen1335.renderjs.client.renderer.ModRenderType;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
 import dev.latvian.mods.kubejs.typings.Info;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
@@ -30,6 +28,7 @@ import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.function.Consumer;
 
 @Mod.EventBusSubscriber(modid = Renderjs.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
@@ -47,7 +46,10 @@ public class RenderJSWorldRender {
     @SubscribeEvent
     public static void RenderLevelStageEvent(RenderLevelStageEvent event) {
         if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_SOLID_BLOCKS) {
-            RENDER_LIST.forEach(consumer -> consumer.accept(RenderContext.getInstance().setParam(event, getInstance().getRenderBuffers().bufferSource())));
+            Iterator<Consumer<RenderContext>> iterator = RENDER_LIST.iterator();
+            while (iterator.hasNext()) {
+                iterator.next().accept(RenderContext.getInstance().setParam(event, getInstance().getRenderBuffers().bufferSource()));
+            }
         }
     }
 
@@ -74,8 +76,9 @@ public class RenderJSWorldRender {
         poseStack.popPose();
     }
 
+    @Info("(PoseStack poseStack, BlockState blockState, int BlockLight, int SkyLight, @Nullable RenderType renderType)")
     public void renderBlock2(PoseStack poseStack, BlockState blockState, int BlockLight, int SkyLight, @Nullable RenderType renderType) {
-        minecraft.getBlockRenderer().renderSingleBlock(blockState, poseStack, getRenderBuffers().bufferSource(), LightTexture.pack(BlockLight, SkyLight), OverlayTexture.NO_OVERLAY, net.minecraftforge.client.model.data.ModelData.EMPTY, null);
+        minecraft.getBlockRenderer().renderSingleBlock(blockState, poseStack, getRenderBuffers().bufferSource(), LightTexture.pack(BlockLight, SkyLight), OverlayTexture.NO_OVERLAY, net.minecraftforge.client.model.data.ModelData.EMPTY, renderType);
     }
 
     @Info("绘制方块边框线(BlockPos blockPos, BlockState blockState,@Nullable RenderType renderType)")
@@ -90,6 +93,7 @@ public class RenderJSWorldRender {
         }
     }
 
+    @Info("(PoseStack poseStack, BlockPos blockPos, BlockState blockState, @Nullable RenderType renderType)")
     public void renderBlockOutLine2(PoseStack poseStack, BlockPos blockPos, BlockState blockState, @Nullable RenderType renderType) {
         if (!blockState.isAir()) {
             Vec3 playerPos = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
