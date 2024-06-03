@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.GameRenderer;
 
 @Info("主要给RenderJSItemDecorator和gui使用")
 public class RenderJSUtils {
-    @Info("绘制材质(int x, int y, float scaleX, float scaleY, float rotate, int uOffset, int vOffset, int uWidth, int vHeight, int textureWidth, int textureHeight)")
+    @Info("绘制材质(可中心旋转，中心缩放)(int x, int y, float scaleX, float scaleY, float rotate, int uOffset, int vOffset, int uWidth, int vHeight, int textureWidth, int textureHeight)")
     public static void blit(int x, int y, float scaleX, float scaleY, float rotate, int uOffset, int vOffset, int uWidth, int vHeight, int textureWidth, int textureHeight) {
         PoseStack poseStack = new PoseStack();
         poseStack.pushPose();
@@ -33,4 +33,6 @@ public class RenderJSUtils {
         pRenderer.vertex(pX + pWidth, pY, 0.0D).color(pRed, pGreen, pBlue, pAlpha).endVertex();
         BufferUploader.drawWithShader(pRenderer.end());
     }
+
+
 }

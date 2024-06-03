@@ -6,6 +6,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix4f;
 import dev.latvian.mods.kubejs.typings.Info;
+import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.block.BlockColors;
@@ -37,6 +38,7 @@ public class RenderJSWorldRender {
     public static boolean isReload = false;
     private static final RenderJSWorldRender instance = new RenderJSWorldRender();
 
+    @HideFromJS
     public static RenderJSWorldRender getInstance() {
         return instance;
     }
@@ -139,7 +141,6 @@ public class RenderJSWorldRender {
 
     public static class RenderContext {
         private static final RenderContext instance = new RenderContext();
-        public RenderLevelStageEvent.Stage stage;
         public MultiBufferSource.BufferSource bufferSource;
 
         public static RenderContext getInstance() {
@@ -163,7 +164,6 @@ public class RenderJSWorldRender {
             this.partialTick = event.getPartialTick();
             this.camera = event.getCamera();
             this.frustum = event.getFrustum();
-            this.stage = event.getStage();
             this.bufferSource = bufferSource;
             return this;
         }
