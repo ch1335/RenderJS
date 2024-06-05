@@ -11,8 +11,9 @@ import dev.latvian.mods.kubejs.script.BindingsEvent;
 public class RenderJSPlugin extends KubeJSPlugin {
     @Override
     public void clearCaches() {
-        RenderJSGUI.isReload = true;
-        RenderJSWorldRender.isReload = true;
+        RenderJSGUI.clearRender();
+        RenderJSWorldRender.clearRender();
+
     }
 
     @Override

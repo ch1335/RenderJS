@@ -54,12 +54,10 @@ public class RenderJSWorldRender {
             }
         }
     }
-
+    public static void clearRender(){
+        RENDER_LIST.clear();
+    }
     public void addWorldRender(Consumer<RenderContext> consumer) {
-        if (isReload) {
-            RENDER_LIST.clear();
-            isReload = false;
-        }
         RENDER_LIST.add(consumer);
     }
 
