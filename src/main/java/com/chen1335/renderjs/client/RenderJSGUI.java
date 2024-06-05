@@ -15,6 +15,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.function.Consumer;
@@ -79,10 +80,7 @@ public class RenderJSGUI extends GuiComponent {
 
     @Info("rgba颜色转10进制")
     public int rgbaColor(int r, int g, int b, int a) {
-        int i = r << 16;
-        i = i + g << 8;
-        i = i + b;
-        return i | (a << 24 & -16777216);
+        return new Color(r,g,b,a).getRGB();
     }
 
     @Info("绘制图片，需要与RenderSystem类配合使用,总图片大小默认256x256(@NotNull PoseStack poseStack, int x, int y, int uOffset, int vOffset, int uWidth, int vHeight)")
