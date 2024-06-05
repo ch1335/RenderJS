@@ -42,6 +42,10 @@ public class RenderJSGUI extends GuiComponent {
 
     @Info("添加render")
     public void addRender(Consumer<RenderJSGUI.renderContext> consumer) {
+        if (isReload) {
+            RenderJSGUI.renderList.clear();
+            isReload = false;
+        }
         renderList.add(consumer);
     }
 
