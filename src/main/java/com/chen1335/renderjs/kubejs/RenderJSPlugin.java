@@ -14,7 +14,7 @@ public class RenderJSPlugin extends KubeJSPlugin {
     public void clearCaches() {
         RenderJSGUI.isReload = true;
         RenderJSWorldRender.isReload = true;
-        Renderjs.LOGGER.info("清楚缓存");
+        Renderjs.LOGGER.info("清除缓存");
     }
 
     @Override
