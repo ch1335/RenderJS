@@ -1,0 +1,10 @@
+{
+  "required": true,
+  "package": "com.chen1335.renderjs.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "renderjs.mixins.refmap.json",
+  "mixins": [
+	"core.KubeJSClientMixin"
+  ],
+  "minVersion": "0.8"
+}

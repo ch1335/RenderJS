@@ -23,39 +23,31 @@ import java.util.function.Consumer;
 @Mod.EventBusSubscriber(modid = Renderjs.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class RenderJSGUI extends GuiComponent {
 
-    @HideFromJS
-    public static Boolean isReload = false;
-
     public static RenderJSGUI instance = new RenderJSGUI(Minecraft.getInstance());
+    public static ArrayList<Consumer<RenderJSGUI.renderContext>> renderList = new ArrayList<>();
+    private final Minecraft minecraft;
+    public RenderJSGUI(Minecraft minecraft) {
+        this.minecraft = minecraft;
+    }
 
     @Info("获取实例")
     public static RenderJSGUI getInstance() {
         return instance;
     }
 
-    public static ArrayList<Consumer<RenderJSGUI.renderContext>> renderList = new ArrayList<>();
-    private final Minecraft minecraft;
-
-    public RenderJSGUI(Minecraft minecraft) {
-        this.minecraft = minecraft;
-    }
-
-    @Info("添加render")
-    public void addRender(Consumer<RenderJSGUI.renderContext> consumer) {
-        if (isReload) {
-            RenderJSGUI.renderList.clear();
-            isReload = false;
-        }
-        renderList.add(consumer);
-    }
-
-    public static void clearRender(){
+    public static void clearRender() {
         renderList.clear();
     }
+
     @HideFromJS
     @SubscribeEvent
     public static void RenderGuiEvent(RenderGuiEvent.Post event) {
         instance.render(renderContext.instance.setContext(event));
+    }
+
+    @Info("添加render")
+    public void addRender(Consumer<RenderJSGUI.renderContext> consumer) {
+        renderList.add(consumer);
     }
 
     @HideFromJS
@@ -83,7 +75,7 @@ public class RenderJSGUI extends GuiComponent {
 
     @Info("rgba颜色转10进制")
     public int rgbaColor(int r, int g, int b, int a) {
-        return new Color(r,g,b,a).getRGB();
+        return new Color(r, g, b, a).getRGB();
     }
 
     @Info("绘制图片，需要与RenderSystem类配合使用,总图片大小默认256x256(@NotNull PoseStack poseStack, int x, int y, int uOffset, int vOffset, int uWidth, int vHeight)")

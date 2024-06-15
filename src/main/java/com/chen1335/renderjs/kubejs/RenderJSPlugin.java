@@ -1,20 +1,26 @@
 package com.chen1335.renderjs.kubejs;
 
-import com.chen1335.renderjs.Renderjs;
 import com.chen1335.renderjs.client.ModItemDecorator.RenderJSItemDecoratorHandler;
 import com.chen1335.renderjs.client.RenderJSGUI;
 import com.chen1335.renderjs.client.RenderJSWorldRender;
+import com.chen1335.renderjs.client.events.AddGuiRenderEvent;
+import com.chen1335.renderjs.client.events.AddWorldRenderEvent;
 import com.chen1335.renderjs.kubejs.bindings.RenderJSUtils;
+import com.chen1335.renderjs.kubejs.bindings.event.RenderJSEvents;
 import com.chen1335.renderjs.kubejs.client.RenderJSRenderSystem;
 import dev.latvian.mods.kubejs.KubeJSPlugin;
 import dev.latvian.mods.kubejs.script.BindingsEvent;
 
 public class RenderJSPlugin extends KubeJSPlugin {
     @Override
-    public void clearCaches() {
-        RenderJSGUI.isReload = true;
-        RenderJSWorldRender.isReload = true;
-        Renderjs.LOGGER.info("清除缓存");
+    public void registerEvents() {
+        RenderJSEvents.GROUP.register();
+    }
+
+    @Override
+    public void clientInit() {
+        RenderJSEvents.ADD_GUI_RENDER.post(new AddGuiRenderEvent());
+        RenderJSEvents.ADD_WORLD_RENDER.post(new AddWorldRenderEvent());
     }
 
     @Override

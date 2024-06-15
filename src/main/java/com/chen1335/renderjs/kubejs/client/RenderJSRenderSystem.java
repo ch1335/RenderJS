@@ -2,7 +2,6 @@ package com.chen1335.renderjs.kubejs.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.latvian.mods.kubejs.typings.Info;
-import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 
