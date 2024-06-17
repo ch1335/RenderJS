@@ -9,8 +9,8 @@ import net.minecraft.client.renderer.GameRenderer;
 
 @Info("主要给RenderJSItemDecorator和gui使用")
 public class RenderJSUtils {
-    @Info("绘制材质(可中心旋转，中心缩放)(int x, int y, float scaleX, float scaleY, float rotate, int uOffset, int vOffset, int uWidth, int vHeight, int textureWidth, int textureHeight)")
-    public static void blit(int x, int y, float scaleX, float scaleY, float rotate, int uOffset, int vOffset, int uWidth, int vHeight, int textureWidth, int textureHeight) {
+    @Info("绘制材质(可中心旋转，中心缩放)(double x, double y, float scaleX, float scaleY, float rotate, int uOffset, int vOffset, int uWidth, int vHeight, int textureWidth, int textureHeight)")
+    public static void blit(double x, double y, float scaleX, float scaleY, float rotate, int uOffset, int vOffset, int uWidth, int vHeight, int textureWidth, int textureHeight) {
         PoseStack poseStack = new PoseStack();
         poseStack.pushPose();
         poseStack.translate(x, y, 0);
@@ -21,8 +21,8 @@ public class RenderJSUtils {
         poseStack.popPose();
     }
 
-    @Info("纯色填充(int pX, int pY, int pWidth, int pHeight, int pRed, int pGreen, int pBlue, int pAlpha)")
-    public static void fillRect(int pX, int pY, int pWidth, int pHeight, int pRed, int pGreen, int pBlue, int pAlpha) {
+    @Info("纯色填充(double pX, double pY, int pWidth, int pHeight, int pRed, int pGreen, int pBlue, int pAlpha)")
+    public static void fillRect(double pX, double pY, int pWidth, int pHeight, int pRed, int pGreen, int pBlue, int pAlpha) {
         Tesselator tesselator = Tesselator.getInstance();
         BufferBuilder pRenderer = tesselator.getBuilder();
         RenderSystem.setShader(GameRenderer::getPositionColorShader);

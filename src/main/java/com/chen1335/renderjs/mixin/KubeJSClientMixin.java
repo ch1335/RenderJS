@@ -1,4 +1,4 @@
-package com.chen1335.renderjs.mixin.core;
+package com.chen1335.renderjs.mixin;
 
 import com.chen1335.renderjs.Renderjs;
 import dev.latvian.mods.kubejs.script.ScriptManager;

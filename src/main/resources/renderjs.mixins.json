@@ -4,7 +4,10 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "renderjs.mixins.refmap.json",
   "mixins": [
-	"core.KubeJSClientMixin"
+    "KubeJSClientMixin"
   ],
-  "minVersion": "0.8"
+  "minVersion": "0.8",
+  "client": [
+    "ItemRendererMixin"
+  ]
 }

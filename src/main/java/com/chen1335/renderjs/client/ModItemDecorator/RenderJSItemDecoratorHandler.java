@@ -18,8 +18,11 @@ import java.util.function.Consumer;
 public class RenderJSItemDecoratorHandler {
     @HideFromJS
     private static final RenderJSItemDecoratorHandler instance = new RenderJSItemDecoratorHandler();
-
+    @HideFromJS
     private static final Map<Item, Map<String, RenderJSItemDecorator>> REGISTERED_ITEM_DECORATOR = new HashMap<>();
+
+    @HideFromJS
+    public static final Map<String, RenderJSItemDecorator> REGISTERED_ALL_ITEM_DECORATOR = new HashMap<>();
 
     @HideFromJS
     public static RenderJSItemDecoratorHandler getInstance() {
@@ -38,7 +41,7 @@ public class RenderJSItemDecoratorHandler {
         });
     }
 
-    @Info("注册一个ItemDecorator,如果之前已经注册则返回之前注册的ItemDecorator,reload时会自动将新内容更新到对应的ItemDecorator")
+    @HideFromJS
     public RenderJSItemDecorator register(Item item, String id, Consumer<RenderJSItemDecorator.renderContext> consumer) {
 
         RenderJSItemDecorator renderJSItemDecorator = new RenderJSItemDecorator(consumer);
@@ -52,6 +55,15 @@ public class RenderJSItemDecoratorHandler {
         }
 
         REGISTERED_ITEM_DECORATOR.get(item).put(id, renderJSItemDecorator);
+        return renderJSItemDecorator;
+    }
+    @HideFromJS
+    public RenderJSItemDecorator  registerForAllItem(String id, Consumer<RenderJSItemDecorator.renderContext> consumer) {
+        if (REGISTERED_ALL_ITEM_DECORATOR.containsKey(id)) {
+            return REGISTERED_ALL_ITEM_DECORATOR.get(id);
+        }
+        RenderJSItemDecorator renderJSItemDecorator = new RenderJSItemDecorator(consumer);
+        REGISTERED_ALL_ITEM_DECORATOR.put(id,renderJSItemDecorator);
         return renderJSItemDecorator;
     }
 }

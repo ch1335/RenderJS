@@ -13,4 +13,9 @@ public class ItemDecorationsRegisterEvent extends EventJS {
     public RenderJSItemDecorator register(Item item, String id, Consumer<RenderJSItemDecorator.renderContext> consumer) {
         return RenderJSItemDecoratorHandler.getInstance().register(item, id, consumer);
     }
+
+    @Info("为所有物品注册一个ItemDecorator")
+    public RenderJSItemDecorator registerForAllItem(String id, Consumer<RenderJSItemDecorator.renderContext> consumer) {
+        return RenderJSItemDecoratorHandler.getInstance().registerForAllItem(id, consumer);
+    }
 }
