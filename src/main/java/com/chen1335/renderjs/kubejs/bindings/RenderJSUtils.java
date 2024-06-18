@@ -16,7 +16,7 @@ public class RenderJSUtils {
         poseStack.translate(x, y, 0);
         poseStack.mulPose(Vector3f.ZP.rotationDegrees(rotate));
         poseStack.scale(scaleX, scaleY, 1);
-        poseStack.translate(-Math.ceil((double) uWidth / 2) + 0.5, -Math.ceil((double) vHeight / 2) + 0.5, 0);
+        poseStack.translate((double) -uWidth / 2, -(double) vHeight / 2, 0);
         GuiComponent.blit(poseStack, 0, 0, uOffset, vOffset, uWidth, vHeight, textureWidth, textureHeight);
         poseStack.popPose();
     }
