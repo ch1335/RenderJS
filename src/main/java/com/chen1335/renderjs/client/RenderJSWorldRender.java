@@ -18,6 +18,7 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -46,9 +47,9 @@ public class RenderJSWorldRender {
     @SubscribeEvent
     public static void RenderLevelStageEvent(RenderLevelStageEvent event) {
         if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_SOLID_BLOCKS) {
-            Iterator<Consumer<RenderContext>> iterator = RENDER_LIST.iterator();
-            while (iterator.hasNext()) {
-                iterator.next().accept(RenderContext.getInstance().setParam(event, getInstance().getRenderBuffers().bufferSource()));
+            for (Consumer<RenderContext> consumer : RENDER_LIST) {
+                consumer.accept(RenderContext.getInstance().setParam(event, getInstance().getRenderBuffers().bufferSource()));
+//                instance.renderBlock1(new BlockPos(0,0,0), Blocks.GRASS.defaultBlockState(),15,15,ModRenderType.TOP_LAYER_TARGET);
             }
         }
     }
@@ -76,11 +77,15 @@ public class RenderJSWorldRender {
         RENDER_LIST.add(consumer);
     }
 
-    @Info("RenderType使用这个可以使渲染出来的方块穿透地形")
-    public RenderType getOutlineTargetRenderType() {
-        return ModRenderType.CUTOUT_OUTLINE_TARGET;
+    @Info("RenderType使用这个可以使渲染出来的方块穿透地形(BlockOutLine请使用getTopLayerLineType())")
+    public RenderType getTopLayerType() {
+        return ModRenderType.TOP_LAYER_TARGET;
     }
 
+    @Info("BlockOutLine的RenderType使用这个可以使渲染出来的方块穿透地形")
+    public RenderType getTopLayerLineType() {
+        return ModRenderType.TOP_LAYER_LINE_TARGET;
+    }
     @Info("绘制方块(BlockPos blockPos, BlockState blockState, int BlockLight, int SkyLight,@Nullable RenderType renderType)")
     public void renderBlock1(BlockPos blockPos, BlockState blockState, int BlockLight, int SkyLight, @Nullable RenderType renderType) {
         PoseStack poseStack = RenderContext.instance.poseStack;
