@@ -2,7 +2,9 @@ package com.chen1335.renderjs.client;
 
 import com.chen1335.renderjs.Renderjs;
 import com.chen1335.renderjs.client.renderer.ModRenderType;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix4f;
 import dev.latvian.mods.kubejs.typings.Info;
@@ -12,12 +14,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -47,10 +52,15 @@ public class RenderJSWorldRender {
     @SubscribeEvent
     public static void RenderLevelStageEvent(RenderLevelStageEvent event) {
         if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_SOLID_BLOCKS) {
-            for (Consumer<RenderContext> consumer : RENDER_LIST) {
-                consumer.accept(RenderContext.getInstance().setParam(event, getInstance().getRenderBuffers().bufferSource()));
-//                instance.renderBlock1(new BlockPos(0,0,0), Blocks.GRASS.defaultBlockState(),15,15,ModRenderType.TOP_LAYER_TARGET);
+            RenderSystem.disableDepthTest();
+            Iterator<Consumer<RenderContext>> consumerIterator = RENDER_LIST.iterator();
+            if (consumerIterator.hasNext()) {
+                consumerIterator.next().accept(RenderContext.getInstance().setParam(event, getInstance().getRenderBuffers().bufferSource()));
+                instance.renderBlock1(new BlockPos(0, 0, 0), Blocks.GRASS.defaultBlockState(), 15, 15, ModRenderType.TOP_LAYER_TARGET);
+                instance.renderBlockOutLine1(new BlockPos(0, 1, 0), Blocks.LECTERN.defaultBlockState(), ModRenderType.TOP_LAYER_LINE_TARGET);//RenderType使用这个可以使渲染出来的方块穿透地形
+                instance.renderItem(event.getPoseStack(), new ItemStack(Items.DIAMOND_SWORD), 15, 15);
             }
+            RenderSystem.enableDepthTest();
         }
     }
 
@@ -86,13 +96,15 @@ public class RenderJSWorldRender {
     public RenderType getTopLayerLineType() {
         return ModRenderType.TOP_LAYER_LINE_TARGET;
     }
+
     @Info("绘制方块(BlockPos blockPos, BlockState blockState, int BlockLight, int SkyLight,@Nullable RenderType renderType)")
     public void renderBlock1(BlockPos blockPos, BlockState blockState, int BlockLight, int SkyLight, @Nullable RenderType renderType) {
+        MultiBufferSource.BufferSource bufferSource = getRenderBuffers().bufferSource();
         PoseStack poseStack = RenderContext.instance.poseStack;
         Vec3 playerPos = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
         poseStack.pushPose();
         poseStack.translate(blockPos.getX() - playerPos.x, blockPos.getY() - playerPos.y, blockPos.getZ() - playerPos.z);
-        minecraft.getBlockRenderer().renderSingleBlock(blockState, poseStack, getRenderBuffers().bufferSource(), LightTexture.pack(BlockLight, SkyLight), OverlayTexture.NO_OVERLAY, net.minecraftforge.client.model.data.ModelData.EMPTY, renderType);
+        minecraft.getBlockRenderer().renderSingleBlock(blockState, poseStack, bufferSource, LightTexture.pack(BlockLight, SkyLight), OverlayTexture.NO_OVERLAY, net.minecraftforge.client.model.data.ModelData.EMPTY, renderType);
         poseStack.popPose();
     }
 
@@ -104,22 +116,37 @@ public class RenderJSWorldRender {
     @Info("绘制方块边框线(BlockPos blockPos, BlockState blockState,@Nullable RenderType renderType)")
     public void renderBlockOutLine1(BlockPos blockPos, BlockState blockState, @Nullable RenderType renderType) {
         if (!blockState.isAir()) {
+            MultiBufferSource.BufferSource bufferSource = getRenderBuffers().bufferSource();
             Vec3 playerPos = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
             PoseStack poseStack = RenderContext.instance.poseStack;
-            VertexConsumer vertexconsumer = this.getRenderBuffers().bufferSource().getBuffer(renderType == null ? RenderType.lines() : renderType);
+            RenderType renderType1 = renderType == null ? RenderType.lines() : renderType;
+            VertexConsumer vertexconsumer = bufferSource.getBuffer(renderType1);
             poseStack.pushPose();
             getInstance().renderHitOutline(poseStack, vertexconsumer, Minecraft.getInstance().gameRenderer.getMainCamera().getEntity(), playerPos.x, playerPos.y, playerPos.z, blockPos, blockState);
             poseStack.popPose();
+            bufferSource.endBatch(renderType1);
         }
     }
+
 
     @Info("(PoseStack poseStack, BlockPos blockPos, BlockState blockState, @Nullable RenderType renderType)")
     public void renderBlockOutLine2(PoseStack poseStack, BlockPos blockPos, BlockState blockState, @Nullable RenderType renderType) {
         if (!blockState.isAir()) {
+            MultiBufferSource.BufferSource bufferSource = getRenderBuffers().bufferSource();
             Vec3 playerPos = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
-            VertexConsumer vertexconsumer = this.getRenderBuffers().bufferSource().getBuffer(renderType == null ? RenderType.lines() : renderType);
+            RenderType renderType1 = renderType == null ? RenderType.lines() : renderType;
+            VertexConsumer vertexconsumer = bufferSource.getBuffer(renderType1);
             getInstance().renderHitOutline(poseStack, vertexconsumer, Minecraft.getInstance().gameRenderer.getMainCamera().getEntity(), playerPos.x, playerPos.y, playerPos.z, blockPos, blockState);
         }
+    }
+
+    public void renderItem(PoseStack poseStack, ItemStack itemStack, int PositionLight, int SkyLight) {
+        MultiBufferSource.BufferSource bufferSource = getRenderBuffers().bufferSource();
+        poseStack.pushPose();
+        Vec3 cameraPos = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
+        poseStack.translate(-cameraPos.x, -cameraPos.y, -cameraPos.z);
+        minecraft.getItemRenderer().renderStatic(itemStack, ItemTransforms.TransformType.GROUND, LightTexture.pack(PositionLight, SkyLight), OverlayTexture.NO_OVERLAY, poseStack, bufferSource, minecraft.player.getId());
+        poseStack.popPose();
     }
 
     public BakedModel getBlockModel(BlockState blockState) {
