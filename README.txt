@@ -1,4 +1,4 @@
-//添加渲染(1.1.3的变化)
+//添加渲染(1.1.3+的变化)
 RenderJSEvents.AddGuiRender(event => {
     event.addRender(context=>{
         RenderJSRenderSystem.setShaderColorJS(1,1,1,1)//重置颜色
@@ -9,7 +9,7 @@ RenderJSEvents.AddGuiRender(event => {
     })
 })
 
-//注册ItemDecorations(1.1.3的变化)
+//注册ItemDecorations(1.1.3+的变化)
 RenderJSEvents.RegisterItemDecorations(event => {
    //注册一个ItemDecorator,如果之前已经注册则返回之前注册的ItemDecorator,reload时会自动将新内容更新到对应的ItemDecorator 
     event.register("test:test1", "example", context => {
