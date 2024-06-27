@@ -56,9 +56,6 @@ public class RenderJSWorldRender {
             Iterator<Consumer<RenderContext>> consumerIterator = RENDER_LIST.iterator();
             if (consumerIterator.hasNext()) {
                 consumerIterator.next().accept(RenderContext.getInstance().setParam(event, getInstance().getRenderBuffers().bufferSource()));
-                instance.renderBlock1(new BlockPos(0, 0, 0), Blocks.GRASS.defaultBlockState(), 15, 15, ModRenderType.TOP_LAYER_TARGET);
-                instance.renderBlockOutLine1(new BlockPos(0, 1, 0), Blocks.LECTERN.defaultBlockState(), ModRenderType.TOP_LAYER_LINE_TARGET);//RenderType使用这个可以使渲染出来的方块穿透地形
-                instance.renderItem(event.getPoseStack(), new ItemStack(Items.DIAMOND_SWORD), 15, 15);
             }
             RenderSystem.enableDepthTest();
         }
@@ -140,13 +137,11 @@ public class RenderJSWorldRender {
         }
     }
 
+
+    @Info("渲染物品(PoseStack poseStack, ItemStack itemStack, int PositionLight, int SkyLight)")
     public void renderItem(PoseStack poseStack, ItemStack itemStack, int PositionLight, int SkyLight) {
         MultiBufferSource.BufferSource bufferSource = getRenderBuffers().bufferSource();
-        poseStack.pushPose();
-        Vec3 cameraPos = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
-        poseStack.translate(-cameraPos.x, -cameraPos.y, -cameraPos.z);
         minecraft.getItemRenderer().renderStatic(itemStack, ItemTransforms.TransformType.GROUND, LightTexture.pack(PositionLight, SkyLight), OverlayTexture.NO_OVERLAY, poseStack, bufferSource, minecraft.player.getId());
-        poseStack.popPose();
     }
 
     public BakedModel getBlockModel(BlockState blockState) {

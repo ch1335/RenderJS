@@ -24,7 +24,7 @@ public class RenderJSItemDecorator implements IItemDecorator {
         return true;
     }
 
-    @Info("注册的不满意?,使用这个来重新定义!")
+    @HideFromJS
     public void setRender(Consumer<renderContext> consumer) {
         this.consumer = consumer;
     }

@@ -6,15 +6,12 @@ plugins {
     id 'org.spongepowered.mixin' version '0.7.+'
 }
 
-version = 'forge-1.19.2-v1.1.4'
+version = 'forge-1.19.2-v1.1.5'
 group = 'com.yourname.modid' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'RenderJS'
-
-//设置你的mixin源文件名称
 mixin {
     add sourceSets.main, "renderjs.mixins.refmap.json"
 }
-
 // Mojang ships Java 17 to end users in 1.18+, so your mod should target Java 17.
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
@@ -26,6 +23,8 @@ minecraft {
     runs {
         client {
             workingDirectory project.file('run')
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
             property 'forge.enabledGameTestNamespaces', 'examplemod'
@@ -47,8 +46,6 @@ minecraft {
             property 'forge.enabledGameTestNamespaces', 'examplemod'
 
             property 'forge.logging.console.level', 'debug'
-            //服务端中指定你资源包中的mixin文件
-            arg '-mixin.config=renderjs.mixins.json'
 
             mods {
                 examplemod {
@@ -82,7 +79,6 @@ minecraft {
 
             args '--mod', 'examplemod', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
 
-            arg '-mixin.config=renderjs.mixins.json'
             mods {
                 examplemod {
                     source sourceSets.main
@@ -103,10 +99,10 @@ repositories {
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.19.2-43.3.0'
-    implementation fg.deobf("curse.maven:kubejs-238086:5268393")
-    implementation fg.deobf("curse.maven:rhino-416294:4953345")
-    implementation fg.deobf("curse.maven:architectury-api-419699:5084406")
+    implementation fg.deobf("curse.maven:kubejs-238086:5408722")
+    implementation fg.deobf("curse.maven:architectury-api-419699:5137942")
     implementation fg.deobf("curse.maven:probejs-585406:4744799")
+    implementation fg.deobf("curse.maven:rhino-416294:4953345")
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
 
