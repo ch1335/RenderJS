@@ -8,6 +8,7 @@ import com.chen1335.renderjs.client.events.AddWorldRenderEvent;
 import com.chen1335.renderjs.client.events.ItemDecorationsRegisterEvent;
 import com.chen1335.renderjs.kubejs.bindings.event.RenderJSEvents;
 import com.mojang.logging.LogUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -40,7 +41,7 @@ public class Renderjs {
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
-
+            RenderJSGUI.instance = new RenderJSGUI(Minecraft.getInstance());
         }
     }
 }

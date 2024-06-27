@@ -8,7 +8,9 @@ import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderGuiEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -23,11 +25,14 @@ import java.util.function.Consumer;
 @Mod.EventBusSubscriber(modid = Renderjs.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class RenderJSGUI extends GuiComponent {
 
-    public static RenderJSGUI instance = new RenderJSGUI(Minecraft.getInstance());
+    public static RenderJSGUI instance;
     public static ArrayList<Consumer<RenderJSGUI.renderContext>> renderList = new ArrayList<>();
     private final Minecraft minecraft;
+    private final ItemRenderer itemRenderer;
+
     public RenderJSGUI(Minecraft minecraft) {
         this.minecraft = minecraft;
+        this.itemRenderer=minecraft.getItemRenderer();
     }
 
     @Info("获取实例")
@@ -88,6 +93,10 @@ public class RenderJSGUI extends GuiComponent {
         return this.minecraft.font;
     }
 
+    @Info("绘制物品(ItemStack itemStack,int x,int y)")
+    public void renderItem(ItemStack itemStack,int x,int y){
+        itemRenderer.renderAndDecorateItem(itemStack,x,y);
+    }
     public static class renderContext {
         public static renderContext instance = new renderContext();
         public Window window;
