@@ -1,6 +1,5 @@
 package com.chen1335.renderjs.client;
 
-import com.chen1335.renderjs.ProbeSupport.ParamInfo;
 import com.chen1335.renderjs.Renderjs;
 import com.mojang.blaze3d.platform.Window;
 import dev.latvian.mods.kubejs.typings.Info;
@@ -30,6 +29,7 @@ public class RenderJSGUI extends GuiGraphics {
     @HideFromJS
     public static ArrayList<Consumer<RenderJSGUI.renderContext>> renderList = new ArrayList<>();
     private final Minecraft minecraft;
+
     public RenderJSGUI(Minecraft minecraft) {
         super(minecraft, minecraft.renderBuffers().bufferSource());
         this.minecraft = minecraft;
@@ -64,54 +64,54 @@ public class RenderJSGUI extends GuiGraphics {
     }
 
     @Info("绘制居中字符串")
-    public void drawCenteredStringJS(@ParamInfo(argName = "font") Font font,
-                                     @ParamInfo(argName = "component") Component component,
-                                     @ParamInfo(argName = "x") int x,
-                                     @ParamInfo(argName = "y") int y,
-                                     @ParamInfo(argName = "color") int color) {
+    public void drawCenteredStringJS(Font font,
+                                     Component component,
+                                     int x,
+                                     int y,
+                                     int color) {
         this.drawCenteredString(font, component, x, y, color);
     }
 
     @Info("绘制字符串")
-    public void drawStringJS(@ParamInfo(argName = "font") Font font,
-                             @ParamInfo(argName = "component") Component component,
-                             @ParamInfo(argName = "x") int x,
-                             @ParamInfo(argName = "y") int y,
-                             @ParamInfo(argName = "color") int color,
-                             @ParamInfo(argName = "dropShadow") boolean dropShadow) {
+    public void drawStringJS(Font font,
+                             Component component,
+                             int x,
+                             int y,
+                             int color,
+                             boolean dropShadow) {
         this.drawString(font, component, x, y, color, dropShadow);
     }
 
     @Info(value = "绘制字符串")
-    public void drawInBatchJS(@ParamInfo(argName = "pText") Component pText,
-                              @ParamInfo(argName = "pX") float pX,
-                              @ParamInfo(argName = "pY") float pY,
-                              @ParamInfo(argName = "pColor") int pColor,
-                              @ParamInfo(argName = "pDropShadow") boolean pDropShadow,
-                              @ParamInfo(argName = "pMatrix") Matrix4f pMatrix,
-                              @ParamInfo(argName = "pBuffer") MultiBufferSource pBuffer,
-                              @ParamInfo(argName = "pDisplayMode") Font.DisplayMode pDisplayMode,
-                              @ParamInfo(argName = "pBackgroundColor") int pBackgroundColor,
-                              @ParamInfo(argName = "pPackedLightCoords") int pPackedLightCoords) {
+    public void drawInBatchJS(Component pText,
+                              float pX,
+                              float pY,
+                              int pColor,
+                              boolean pDropShadow,
+                              Matrix4f pMatrix,
+                              MultiBufferSource pBuffer,
+                              Font.DisplayMode pDisplayMode,
+                              int pBackgroundColor,
+                              int pPackedLightCoords) {
         this.getFont().drawInBatch(pText, pX, pY, pColor, pDropShadow, pMatrix, pBuffer, pDisplayMode, pBackgroundColor, pPackedLightCoords);
     }
 
     @Info("rgba颜色转10进制")
-    public int rgbaColor(@ParamInfo(argName = "r") int r,
-                         @ParamInfo(argName = "g") int g,
-                         @ParamInfo(argName = "b") int b,
-                         @ParamInfo(argName = "a") int a) {
+    public int rgbaColor(int r,
+                         int g,
+                         int b,
+                         int a) {
         return new Color(r, g, b, a).getRGB();
     }
 
     @Info("绘制图片,总图片大小默认256x256")
-    public void blitJS(@ParamInfo(argName = "pAtlasLocation")ResourceLocation pAtlasLocation,
-                       @ParamInfo(argName = "x")int x,
-                       @ParamInfo(argName = "y")int y,
-                       @ParamInfo(argName = "uOffset")int uOffset,
-                       @ParamInfo(argName = "vOffset")int vOffset,
-                       @ParamInfo(argName = "uWidth")int uWidth,
-                       @ParamInfo(argName = "vHeight")int vHeight) {
+    public void blitJS(ResourceLocation pAtlasLocation,
+                       int x,
+                       int y,
+                       int uOffset,
+                       int vOffset,
+                       int uWidth,
+                       int vHeight) {
         super.blit(pAtlasLocation, x, y, uOffset, vOffset, uWidth, vHeight);
     }
 

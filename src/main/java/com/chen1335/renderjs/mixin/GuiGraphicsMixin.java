@@ -11,10 +11,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(GuiGraphics.class)
 public class GuiGraphicsMixin {
-    @Inject(method = "renderItemDecorations(Lnet/minecraft/client/gui/Font;Lnet/minecraft/world/item/ItemStack;IILjava/lang/String;)V",at = @At("RETURN"))
-    public void renderGuiItemDecorations(Font pFr, ItemStack pStack, int pXPosition, int pYPosition, String pText, CallbackInfo ci){
+    @Inject(method = "renderItemDecorations(Lnet/minecraft/client/gui/Font;Lnet/minecraft/world/item/ItemStack;IILjava/lang/String;)V", at = @At("RETURN"))
+    public void renderGuiItemDecorations(Font pFr, ItemStack pStack, int pXPosition, int pYPosition, String pText, CallbackInfo ci) {
         RenderJSItemDecoratorHandler.REGISTERED_ALL_ITEM_DECORATOR.values().forEach(renderJSItemDecorator -> {
-            renderJSItemDecorator.render((GuiGraphics) (Object)this,pFr,pStack,pXPosition,pYPosition);
+            renderJSItemDecorator.render((GuiGraphics) (Object) this, pFr, pStack, pXPosition, pYPosition);
         });
     }
 }

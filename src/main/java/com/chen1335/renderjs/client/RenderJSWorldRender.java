@@ -1,6 +1,5 @@
 package com.chen1335.renderjs.client;
 
-import com.chen1335.renderjs.ProbeSupport.ParamInfo;
 import com.chen1335.renderjs.Renderjs;
 import com.chen1335.renderjs.client.renderer.ModRenderType;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -94,13 +93,13 @@ public class RenderJSWorldRender {
         return ModRenderType.TOP_LAYER_LINE_TARGET;
     }
 
-    @Info(value = "绘制方块",params = {
-            @Param(name = "renderType",value = "可以为空，穿透地形请使用getTopLayerType()提供的类型")})
-    public void renderBlock1(@ParamInfo(argName = "blockPos") BlockPos blockPos,
-                             @ParamInfo(argName = "blockState")BlockState blockState,
-                             @ParamInfo(argName = "BlockLight")int BlockLight,
-                             @ParamInfo(argName = "SkyLight")int SkyLight,
-                             @ParamInfo(argName = "renderType")@Nullable RenderType renderType) {
+    @Info(value = "绘制方块", params = {
+            @Param(name = "renderType", value = "可以为空，穿透地形请使用getTopLayerType()提供的类型")})
+    public void renderBlock1(BlockPos blockPos,
+                             BlockState blockState,
+                             int BlockLight,
+                             int SkyLight,
+                             @Nullable RenderType renderType) {
         MultiBufferSource.BufferSource bufferSource = getRenderBuffers().bufferSource();
         PoseStack poseStack = RenderContext.instance.poseStack;
         Vec3 playerPos = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
@@ -110,19 +109,19 @@ public class RenderJSWorldRender {
         poseStack.popPose();
     }
 
-    @Info(value = "绘制方块",params = {@Param(name = "renderType",value = "可以为空，穿透地形请使用getTopLayerType()提供的类型")})
-    public void renderBlock2(@ParamInfo(argName = "poseStack")PoseStack poseStack,
-                             @ParamInfo(argName = "blockState")BlockState blockState,
-                             @ParamInfo(argName = "BlockLight")int BlockLight,
-                             @ParamInfo(argName = "SkyLight")int SkyLight,
-                             @ParamInfo(argName = "renderType")@Nullable RenderType renderType) {
+    @Info(value = "绘制方块", params = {@Param(name = "renderType", value = "可以为空，穿透地形请使用getTopLayerType()提供的类型")})
+    public void renderBlock2(PoseStack poseStack,
+                             BlockState blockState,
+                             int BlockLight,
+                             int SkyLight,
+                             @Nullable RenderType renderType) {
         minecraft.getBlockRenderer().renderSingleBlock(blockState, poseStack, getRenderBuffers().bufferSource(), LightTexture.pack(BlockLight, SkyLight), OverlayTexture.NO_OVERLAY, net.minecraftforge.client.model.data.ModelData.EMPTY, renderType);
     }
 
-    @Info(value = "绘制方块边框线",params = {@Param(name = "renderType",value = "可以为空，穿透地形请使用getTopLayerLineType()提供的类型")})
-    public void renderBlockOutLine1(@ParamInfo(argName = "blockPos")BlockPos blockPos,
-                                    @ParamInfo(argName = "blockState")BlockState blockState,
-                                    @ParamInfo(argName = "renderType")@Nullable RenderType renderType) {
+    @Info(value = "绘制方块边框线", params = {@Param(name = "renderType", value = "可以为空，穿透地形请使用getTopLayerLineType()提供的类型")})
+    public void renderBlockOutLine1(BlockPos blockPos,
+                                    BlockState blockState,
+                                    @Nullable RenderType renderType) {
         if (!blockState.isAir()) {
             MultiBufferSource.BufferSource bufferSource = getRenderBuffers().bufferSource();
             Vec3 playerPos = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
@@ -137,11 +136,11 @@ public class RenderJSWorldRender {
     }
 
 
-    @Info(value = "绘制方块边框线",params = {@Param(name = "renderType",value = "可以为空，穿透地形请使用getTopLayerLineType()提供的类型")})
-    public void renderBlockOutLine2(@ParamInfo(argName = "poseStack") PoseStack poseStack,
-                                    @ParamInfo(argName = "blockPos")BlockPos blockPos,
-                                    @ParamInfo(argName = "blockState")BlockState blockState,
-                                    @ParamInfo(argName = "renderType")@Nullable RenderType renderType) {
+    @Info(value = "绘制方块边框线", params = {@Param(name = "renderType", value = "可以为空，穿透地形请使用getTopLayerLineType()提供的类型")})
+    public void renderBlockOutLine2(PoseStack poseStack,
+                                    BlockPos blockPos,
+                                    BlockState blockState,
+                                    @Nullable RenderType renderType) {
         if (!blockState.isAir()) {
             MultiBufferSource.BufferSource bufferSource = getRenderBuffers().bufferSource();
             Vec3 playerPos = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
@@ -152,13 +151,13 @@ public class RenderJSWorldRender {
     }
 
     @Info(value = "绘制物品")
-    public void renderItem(@ParamInfo(argName = "pMatrixStack")PoseStack pMatrixStack,
-                           @ParamInfo(argName = "itemStack")ItemStack itemStack,
-                           @ParamInfo(argName = "PositionLight") int PositionLight,
-                           @ParamInfo(argName = "SkyLight")int SkyLight,
-                           @ParamInfo(argName = "level")Level level) {
+    public void renderItem(PoseStack pMatrixStack,
+                           ItemStack itemStack,
+                           int PositionLight,
+                           int SkyLight,
+                           Level level) {
         MultiBufferSource.BufferSource bufferSource = getRenderBuffers().bufferSource();
-        minecraft.getItemRenderer().renderStatic(itemStack, ItemDisplayContext.GROUND, LightTexture.pack(PositionLight, SkyLight), OverlayTexture.NO_OVERLAY, pMatrixStack, bufferSource,level, minecraft.player.getId());
+        minecraft.getItemRenderer().renderStatic(itemStack, ItemDisplayContext.GROUND, LightTexture.pack(PositionLight, SkyLight), OverlayTexture.NO_OVERLAY, pMatrixStack, bufferSource, level, minecraft.player.getId());
     }
 
     public BakedModel getBlockModel(BlockState blockState) {

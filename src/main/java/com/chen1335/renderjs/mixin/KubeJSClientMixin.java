@@ -1,10 +1,8 @@
 package com.chen1335.renderjs.mixin;
 
-import com.chen1335.renderjs.ProbeSupport.RenderJSParamFixer;
 import com.chen1335.renderjs.Renderjs;
 import dev.latvian.mods.kubejs.script.ScriptManager;
 import dev.latvian.mods.kubejs.script.ScriptType;
-import net.minecraftforge.fml.ModList;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -23,9 +21,6 @@ public class KubeJSClientMixin {
         if (this.scriptType == ScriptType.CLIENT) {
             Renderjs.LOGGER.info("RenderJSReload!");
             Renderjs.reloadRenders();
-            if (ModList.get().isLoaded("probejs")) {
-                RenderJSParamFixer.addListener();
-            }
         }
     }
 }

@@ -1,13 +1,11 @@
 package com.chen1335.renderjs;
 
-import com.chen1335.renderjs.ProbeSupport.RenderJSParamFixer;
 import com.chen1335.renderjs.client.ModItemDecorator.RenderJSItemDecoratorHandler;
 import com.chen1335.renderjs.client.RenderJSGUI;
 import com.chen1335.renderjs.client.RenderJSWorldRender;
 import com.chen1335.renderjs.client.events.AddGuiRenderEvent;
 import com.chen1335.renderjs.client.events.AddWorldRenderEvent;
 import com.chen1335.renderjs.client.events.ItemDecorationsRegisterEvent;
-import com.chen1335.renderjs.kubejs.bindings.RenderJSUtils;
 import com.chen1335.renderjs.kubejs.bindings.event.RenderJSEvents;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
@@ -48,9 +46,6 @@ public class Renderjs {
             RenderJSGUI.instance = new RenderJSGUI(Minecraft.getInstance());
             if (ModList.get().isLoaded("probejs")) {
                 LOGGER.info("You have Probejs! Good!");
-                RenderJSParamFixer.addFixClass(RenderJSUtils.class);
-                RenderJSParamFixer.addFixClass(RenderJSWorldRender.class);
-                RenderJSParamFixer.addFixClass(RenderJSGUI.class);
             }
         }
     }

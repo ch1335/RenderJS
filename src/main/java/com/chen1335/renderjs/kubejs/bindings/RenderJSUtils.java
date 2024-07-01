@@ -1,6 +1,6 @@
 package com.chen1335.renderjs.kubejs.bindings;
 
-import com.chen1335.renderjs.ProbeSupport.ParamInfo;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import dev.latvian.mods.kubejs.typings.Info;
@@ -11,20 +11,22 @@ import java.awt.*;
 
 @Info("主要给RenderJSItemDecorator和gui使用")
 public class RenderJSUtils {
+
+
     @Info("绘制材质(可中心旋转，中心缩放)")
-    public static void blit(@ParamInfo(argName = "guiGraphics")GuiGraphics guiGraphics,
-                            @ParamInfo(argName = "pAtlasLocation")ResourceLocation pAtlasLocation,
-                            @ParamInfo(argName = "x")double x,
-                            @ParamInfo(argName = "y")double y,
-                            @ParamInfo(argName = "scaleX")float scaleX,
-                            @ParamInfo(argName = "scaleY")float scaleY,
-                            @ParamInfo(argName = "rotate")float rotate,
-                            @ParamInfo(argName = "uOffset")int uOffset,
-                            @ParamInfo(argName = "vOffset")int vOffset,
-                            @ParamInfo(argName = "uWidth")int uWidth,
-                            @ParamInfo(argName = "vHeight")int vHeight,
-                            @ParamInfo(argName = "textureWidth")int textureWidth,
-                            @ParamInfo(argName = "textureHeight")int textureHeight) {
+    public static void blit(GuiGraphics guiGraphics,
+                            ResourceLocation pAtlasLocation,
+                            double x,
+                            double y,
+                            float scaleX,
+                            float scaleY,
+                            float rotate,
+                            int uOffset,
+                            int vOffset,
+                            int uWidth,
+                            int vHeight,
+                            int textureWidth,
+                            int textureHeight) {
         PoseStack poseStack = guiGraphics.pose();
         poseStack.pushPose();
         poseStack.translate(x, y, 0);
@@ -36,15 +38,15 @@ public class RenderJSUtils {
     }
 
     @Info(value = "纯色填充")
-    public static void fill(@ParamInfo(argName = "guiGraphics") GuiGraphics guiGraphics,
-                            @ParamInfo(argName = "minX") int pMinX,
-                            @ParamInfo(argName = "minY") int pMinY,
-                            @ParamInfo(argName = "maxX") int pMaxX,
-                            @ParamInfo(argName = "maxY") int pMaxY,
-                            @ParamInfo(argName = "r") int pRed,
-                            @ParamInfo(argName = "g") int pGreen,
-                            @ParamInfo(argName = "b") int pBlue,
-                            @ParamInfo(argName = "a") int pAlpha) {
+    public static void fill(GuiGraphics guiGraphics,
+                            int pMinX,
+                            int pMinY,
+                            int pMaxX,
+                            int pMaxY,
+                            int pRed,
+                            int pGreen,
+                            int pBlue,
+                            int pAlpha) {
         guiGraphics.fill(pMinX, pMinY, pMaxX, pMaxY, new Color(pRed, pGreen, pBlue, pAlpha).getRGB());
     }
 }

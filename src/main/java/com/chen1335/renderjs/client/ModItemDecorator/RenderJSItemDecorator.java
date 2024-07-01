@@ -26,7 +26,7 @@ public class RenderJSItemDecorator implements IItemDecorator {
     @HideFromJS
     @Override
     public boolean render(GuiGraphics guiGraphics, Font font, ItemStack stack, int xOffset, int yOffset) {
-        this.consumer.accept(new renderContext(guiGraphics,font, stack, xOffset, yOffset));
+        this.consumer.accept(new renderContext(guiGraphics, font, stack, xOffset, yOffset));
         return true;
     }
 
@@ -37,7 +37,7 @@ public class RenderJSItemDecorator implements IItemDecorator {
         public final int yOffset;
         public GuiGraphics guiGraphics;
 
-        public renderContext(GuiGraphics guiGraphics,Font font, ItemStack itemStack, int xOffset, int yOffset) {
+        public renderContext(GuiGraphics guiGraphics, Font font, ItemStack itemStack, int xOffset, int yOffset) {
             this.font = font;
             this.itemStack = itemStack;
             this.xOffset = xOffset;
