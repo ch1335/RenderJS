@@ -1,6 +1,5 @@
 package com.chen1335.renderjs.client.ModItemDecorator;
 
-import dev.latvian.mods.kubejs.typings.Info;
 import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.client.gui.Font;
 import net.minecraft.world.item.ItemStack;

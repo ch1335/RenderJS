@@ -29,6 +29,7 @@ public class Renderjs {
         MinecraftForge.EVENT_BUS.register(this);
     }
 
+
     public static void reloadRenders() {
         RenderJSGUI.clearRender();
         RenderJSWorldRender.clearRender();

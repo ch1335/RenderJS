@@ -32,7 +32,7 @@ public class RenderJSGUI extends GuiComponent {
 
     public RenderJSGUI(Minecraft minecraft) {
         this.minecraft = minecraft;
-        this.itemRenderer=minecraft.getItemRenderer();
+        this.itemRenderer = minecraft.getItemRenderer();
     }
 
     @Info("获取实例")
@@ -94,9 +94,10 @@ public class RenderJSGUI extends GuiComponent {
     }
 
     @Info("绘制物品(ItemStack itemStack,int x,int y)")
-    public void renderItem(ItemStack itemStack,int x,int y){
-        itemRenderer.renderAndDecorateItem(itemStack,x,y);
+    public void renderItem(ItemStack itemStack, int x, int y) {
+        itemRenderer.renderAndDecorateItem(itemStack, x, y);
     }
+
     public static class renderContext {
         public static renderContext instance = new renderContext();
         public Window window;

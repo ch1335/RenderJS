@@ -2,7 +2,6 @@ package com.chen1335.renderjs.client.ModItemDecorator;
 
 import com.chen1335.renderjs.client.events.ItemDecorationsRegisterEvent;
 import com.chen1335.renderjs.kubejs.bindings.event.RenderJSEvents;
-import dev.latvian.mods.kubejs.typings.Info;
 import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
@@ -17,12 +16,11 @@ import java.util.function.Consumer;
 @OnlyIn(Dist.CLIENT)
 public class RenderJSItemDecoratorHandler {
     @HideFromJS
+    public static final Map<String, RenderJSItemDecorator> REGISTERED_ALL_ITEM_DECORATOR = new HashMap<>();
+    @HideFromJS
     private static final RenderJSItemDecoratorHandler instance = new RenderJSItemDecoratorHandler();
     @HideFromJS
     private static final Map<Item, Map<String, RenderJSItemDecorator>> REGISTERED_ITEM_DECORATOR = new HashMap<>();
-
-    @HideFromJS
-    public static final Map<String, RenderJSItemDecorator> REGISTERED_ALL_ITEM_DECORATOR = new HashMap<>();
 
     @HideFromJS
     public static RenderJSItemDecoratorHandler getInstance() {
@@ -57,13 +55,14 @@ public class RenderJSItemDecoratorHandler {
         REGISTERED_ITEM_DECORATOR.get(item).put(id, renderJSItemDecorator);
         return renderJSItemDecorator;
     }
+
     @HideFromJS
-    public RenderJSItemDecorator  registerForAllItem(String id, Consumer<RenderJSItemDecorator.renderContext> consumer) {
+    public RenderJSItemDecorator registerForAllItem(String id, Consumer<RenderJSItemDecorator.renderContext> consumer) {
         if (REGISTERED_ALL_ITEM_DECORATOR.containsKey(id)) {
             return REGISTERED_ALL_ITEM_DECORATOR.get(id);
         }
         RenderJSItemDecorator renderJSItemDecorator = new RenderJSItemDecorator(consumer);
-        REGISTERED_ALL_ITEM_DECORATOR.put(id,renderJSItemDecorator);
+        REGISTERED_ALL_ITEM_DECORATOR.put(id, renderJSItemDecorator);
         return renderJSItemDecorator;
     }
 }
