@@ -16,8 +16,8 @@ public class KubeJSClientMixin {
     @Final
     public ScriptType scriptType;
 
-    @Inject(method = {"reload"}, at = {@At("RETURN")}, remap = false)
-    private void reload(CallbackInfo ci) {
+    @Inject(method = {"load"}, at = {@At("RETURN")}, remap = false)
+    private void onLoad(CallbackInfo ci) {
         if (this.scriptType == ScriptType.CLIENT) {
             Renderjs.reloadRenders();
         }

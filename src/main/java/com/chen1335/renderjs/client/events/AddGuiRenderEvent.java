@@ -9,6 +9,6 @@ import java.util.function.Consumer;
 public class AddGuiRenderEvent extends EventJS {
     @Info("添加render")
     public void addRender(Consumer<RenderJSGUI.renderContext> consumer) {
-        RenderJSGUI.getInstance().addRender(consumer);
+        RenderJSGUI.addRender(consumer);
     }
 }

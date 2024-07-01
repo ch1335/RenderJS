@@ -42,7 +42,7 @@ public class Renderjs {
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
-            RenderJSGUI.instance = new RenderJSGUI(Minecraft.getInstance());
+            RenderJSGUI.getInstance().Init(Minecraft.getInstance());
         }
     }
 }

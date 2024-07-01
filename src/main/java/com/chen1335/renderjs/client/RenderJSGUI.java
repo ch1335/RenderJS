@@ -25,12 +25,11 @@ import java.util.function.Consumer;
 @Mod.EventBusSubscriber(modid = Renderjs.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class RenderJSGUI extends GuiComponent {
 
-    public static RenderJSGUI instance;
+    public static RenderJSGUI instance = new RenderJSGUI();
     public static ArrayList<Consumer<RenderJSGUI.renderContext>> renderList = new ArrayList<>();
-    private final Minecraft minecraft;
-    private final ItemRenderer itemRenderer;
-
-    public RenderJSGUI(Minecraft minecraft) {
+    private Minecraft minecraft;
+    private ItemRenderer itemRenderer;
+    public void Init(Minecraft minecraft){
         this.minecraft = minecraft;
         this.itemRenderer = minecraft.getItemRenderer();
     }
@@ -51,7 +50,7 @@ public class RenderJSGUI extends GuiComponent {
     }
 
     @Info("添加render")
-    public void addRender(Consumer<RenderJSGUI.renderContext> consumer) {
+    public static void addRender(Consumer<RenderJSGUI.renderContext> consumer) {
         renderList.add(consumer);
     }
 
@@ -63,17 +62,17 @@ public class RenderJSGUI extends GuiComponent {
         }
     }
 
-    @Info("绘制居中字符串(@NotNull PoseStack poseStack, Font font, Component component, int x, int y, int color)")
+    @Info("绘制居中字符串")
     public void drawCenteredStringJS(@NotNull PoseStack poseStack, Font font, Component component, int x, int y, int color) {
         GuiComponent.drawCenteredString(poseStack, font, component, x, y, color);
     }
 
-    @Info("绘制有阴影字符串(PoseStack poseStack, Font font, Component component, int x, int y, int color)")
+    @Info("绘制有阴影字符串")
     public void drawShadowJS(PoseStack poseStack, Font font, Component component, int x, int y, int color) {
         font.drawShadow(poseStack, component, (float) x, (float) y, color);
     }
 
-    @Info("绘制无阴影字符串(PoseStack poseStack, Font font, Component component, int x, int y, int color)")
+    @Info("绘制无阴影字符串")
     public void drawJS(PoseStack poseStack, Font font, Component component, int x, int y, int color) {
         font.draw(poseStack, component, (float) x, (float) y, color);
     }
@@ -83,7 +82,7 @@ public class RenderJSGUI extends GuiComponent {
         return new Color(r, g, b, a).getRGB();
     }
 
-    @Info("绘制图片，需要与RenderSystem类配合使用,总图片大小默认256x256(@NotNull PoseStack poseStack, int x, int y, int uOffset, int vOffset, int uWidth, int vHeight)")
+    @Info("绘制图片，需要与RenderSystem类配合使用,总图片大小默认256x256")
     public void blitJS(@NotNull PoseStack poseStack, int x, int y, int uOffset, int vOffset, int uWidth, int vHeight) {
         super.blit(poseStack, x, y, uOffset, vOffset, uWidth, vHeight);
     }
@@ -93,7 +92,7 @@ public class RenderJSGUI extends GuiComponent {
         return this.minecraft.font;
     }
 
-    @Info("绘制物品(ItemStack itemStack,int x,int y)")
+    @Info("绘制物品")
     public void renderItem(ItemStack itemStack, int x, int y) {
         itemRenderer.renderAndDecorateItem(itemStack, x, y);
     }
