@@ -1,5 +1,6 @@
 package com.chen1335.renderjs.client.ModItemDecorator;
 
+import com.chen1335.renderjs.Renderjs;
 import com.chen1335.renderjs.client.events.ItemDecorationsRegisterEvent;
 import com.chen1335.renderjs.kubejs.bindings.event.RenderJSEvents;
 import dev.latvian.mods.rhino.util.HideFromJS;
@@ -9,60 +10,47 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RegisterItemDecorationsEvent;
 
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.function.Consumer;
 
 @OnlyIn(Dist.CLIENT)
 public class RenderJSItemDecoratorHandler {
     @HideFromJS
-    public static final Map<String, RenderJSItemDecorator> REGISTERED_ALL_ITEM_DECORATOR = new HashMap<>();
+    private static final HashMap<Item, RenderJSItemDecorator> registeredItemDecorators = new HashMap<>();
     @HideFromJS
-    private static final RenderJSItemDecoratorHandler instance = new RenderJSItemDecoratorHandler();
-    @HideFromJS
-    private static final Map<Item, Map<String, RenderJSItemDecorator>> REGISTERED_ITEM_DECORATOR = new HashMap<>();
+    public final RenderJSItemDecorator registeredGlobalItemDecorator;
+
+    public RenderJSItemDecoratorHandler() {
+        registeredGlobalItemDecorator = new RenderJSItemDecorator(null);
+    }
 
     @HideFromJS
     public static RenderJSItemDecoratorHandler getInstance() {
-        return instance;
+        return Renderjs.itemDecoratorHandler;
+    }
+
+    public static void clearRender() {
+        getInstance().registeredGlobalItemDecorator.clear();
+        registeredItemDecorators.values().forEach(RenderJSItemDecorator::clear);
     }
 
     @HideFromJS
-    public static void RegisterItemDecorationsEvent(RegisterItemDecorationsEvent event) {
+    public void RegisterItemDecorationsEvent(RegisterItemDecorationsEvent event) {
+        RenderJSItemDecoratorHandler.clearRender();
         RenderJSEvents.REGISTER_ITEM_DECORATIONS.post(new ItemDecorationsRegisterEvent());
-
-        REGISTERED_ITEM_DECORATOR.forEach((Item item, Map<String, RenderJSItemDecorator> map) -> {
-            Iterator<RenderJSItemDecorator> iterator = map.values().iterator();
-            if (iterator.hasNext()) {
-                event.register(item, iterator.next());
-            }
-        });
+        registeredItemDecorators.forEach(event::register);
     }
 
     @HideFromJS
-    public RenderJSItemDecorator register(Item item, String id, Consumer<RenderJSItemDecorator.renderContext> consumer) {
-
-        RenderJSItemDecorator renderJSItemDecorator = new RenderJSItemDecorator(consumer);
-        if (REGISTERED_ITEM_DECORATOR.containsKey(item) && REGISTERED_ITEM_DECORATOR.get(item).containsKey(id)) {
-            REGISTERED_ITEM_DECORATOR.get(item).get(id).setRender(consumer);
-            return REGISTERED_ITEM_DECORATOR.get(item).get(id);
+    public void register(Item item, Consumer<RenderJSItemDecorator.RenderContext> consumer) {
+        if (registeredItemDecorators.containsKey(item)) {
+            registeredItemDecorators.get(item).addRender(consumer);
+            return;
         }
-
-        if (!REGISTERED_ITEM_DECORATOR.containsKey(item)) {
-            REGISTERED_ITEM_DECORATOR.put(item, new HashMap<>());
-        }
-
-        REGISTERED_ITEM_DECORATOR.get(item).put(id, renderJSItemDecorator);
-        return renderJSItemDecorator;
+        registeredItemDecorators.put(item, new RenderJSItemDecorator(consumer));
     }
 
     @HideFromJS
-    public RenderJSItemDecorator registerForAllItem(String id, Consumer<RenderJSItemDecorator.renderContext> consumer) {
-        if (REGISTERED_ALL_ITEM_DECORATOR.containsKey(id)) {
-            return REGISTERED_ALL_ITEM_DECORATOR.get(id);
-        }
-        RenderJSItemDecorator renderJSItemDecorator = new RenderJSItemDecorator(consumer);
-        REGISTERED_ALL_ITEM_DECORATOR.put(id, renderJSItemDecorator);
-        return renderJSItemDecorator;
+    public void registerForAllItem(Consumer<RenderJSItemDecorator.RenderContext> consumer) {
+        registeredGlobalItemDecorator.addRender(consumer);
     }
 }

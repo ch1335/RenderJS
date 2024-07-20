@@ -8,7 +8,6 @@ import com.chen1335.renderjs.client.events.AddWorldRenderEvent;
 import com.chen1335.renderjs.client.events.ItemDecorationsRegisterEvent;
 import com.chen1335.renderjs.kubejs.bindings.event.RenderJSEvents;
 import com.mojang.logging.LogUtils;
-import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -20,29 +19,53 @@ import org.slf4j.Logger;
 
 @Mod(Renderjs.MODID)
 public class Renderjs {
+
     public static final String MODID = "renderjs";
     public static final Logger LOGGER = LogUtils.getLogger();
+    public static Boolean CAN_RENDER = true;
+    public static RenderJSWorldRender worldRenderInstance;
+    public static RenderJSItemDecoratorHandler itemDecoratorHandler;
+    public static RenderJSGUI renderJSGUI;
 
     public Renderjs() {
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        modEventBus.addListener(RenderJSItemDecoratorHandler::RegisterItemDecorationsEvent);
         MinecraftForge.EVENT_BUS.register(this);
     }
 
+    public static void clientInit() {
+        worldRenderInstance = new RenderJSWorldRender();
+        itemDecoratorHandler = new RenderJSItemDecoratorHandler();
+        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        modEventBus.addListener(itemDecoratorHandler::RegisterItemDecorationsEvent);
+        renderJSGUI = new RenderJSGUI();
+    }
 
     public static void reloadRenders() {
-        RenderJSGUI.clearRender();
-        RenderJSWorldRender.clearRender();
+        disableRender();
+        RenderJSItemDecoratorHandler.clearRender();
+        RenderJSGUI.clearOld();
+        RenderJSWorldRender.clearOld();
         RenderJSEvents.REGISTER_ITEM_DECORATIONS.post(new ItemDecorationsRegisterEvent());
         RenderJSEvents.ADD_GUI_RENDER.post(new AddGuiRenderEvent());
         RenderJSEvents.ADD_WORLD_RENDER.post(new AddWorldRenderEvent());
+        RenderJSGUI.reload();
+        RenderJSWorldRender.reload();
+        enableRender();
+    }
+
+    public static void disableRender() {
+        CAN_RENDER = false;
+    }
+
+    public static void enableRender() {
+        CAN_RENDER = true;
     }
 
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
-            RenderJSGUI.getInstance().Init(Minecraft.getInstance());
+            renderJSGUI.init();
+            worldRenderInstance.init();
         }
     }
 }

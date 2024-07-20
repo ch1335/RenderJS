@@ -7,7 +7,7 @@ import dev.latvian.mods.kubejs.typings.Info;
 import java.util.function.Consumer;
 
 public class AddWorldRenderEvent extends EventJS {
-    @Info("添加render")
+    @Info("添加render\nAdd Render")
     public void addWorldRender(Consumer<RenderJSWorldRender.RenderContext> consumer) {
         RenderJSWorldRender.getInstance().addWorldRender(consumer);
     }

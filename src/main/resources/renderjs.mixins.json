@@ -9,6 +9,7 @@
   "minVersion": "0.8",
   "client": [
 	"ItemRendererMixin",
-	"KubeJSClientMixin"
+	"KubeJSClientMixin",
+	"ScriptManagerMixin"
   ]
 }

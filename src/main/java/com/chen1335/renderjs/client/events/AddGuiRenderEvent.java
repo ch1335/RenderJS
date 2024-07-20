@@ -7,8 +7,8 @@ import dev.latvian.mods.kubejs.typings.Info;
 import java.util.function.Consumer;
 
 public class AddGuiRenderEvent extends EventJS {
-    @Info("添加render")
-    public void addRender(Consumer<RenderJSGUI.renderContext> consumer) {
+    @Info("添加render\n Add Render")
+    public void addRender(Consumer<RenderJSGUI.RenderContext> consumer) {
         RenderJSGUI.addRender(consumer);
     }
 }

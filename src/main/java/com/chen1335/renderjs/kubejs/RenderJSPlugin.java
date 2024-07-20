@@ -8,13 +8,15 @@ import com.chen1335.renderjs.client.events.AddWorldRenderEvent;
 import com.chen1335.renderjs.kubejs.bindings.RenderJSUtils;
 import com.chen1335.renderjs.kubejs.bindings.event.RenderJSEvents;
 import com.chen1335.renderjs.kubejs.client.RenderJSRenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import dev.latvian.mods.kubejs.KubeJSPlugin;
 import dev.latvian.mods.kubejs.script.BindingsEvent;
+import net.minecraft.util.Mth;
 
 public class RenderJSPlugin extends KubeJSPlugin {
     @Override
     public void registerEvents() {
-        RenderJSEvents.GROUP.register();
+        RenderJSEvents.MAIN_GROUP.register();
     }
 
     @Override
@@ -31,6 +33,8 @@ public class RenderJSPlugin extends KubeJSPlugin {
             event.add("RenderJSRenderSystem", RenderJSRenderSystem.class);
             event.add("RenderJSUtils", RenderJSUtils.class);
             event.add("RenderJSWorldRender", RenderJSWorldRender.getInstance());
+            event.add("PoseStack", PoseStack.class);
+            event.add("Mth", Mth.class);
         }
     }
 }

@@ -6,10 +6,12 @@ import com.mojang.math.Vector3f;
 import dev.latvian.mods.kubejs.typings.Info;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.world.level.lighting.SkyLightEngine;
 
 @Info("主要给RenderJSItemDecorator和gui使用")
 public class RenderJSUtils {
-    @Info("绘制材质(可中心旋转，中心缩放)")
+    @Info("绘制材质(可中心旋转，中心缩放)\nDraw texture (rotatable and scalable)")
     public static void blit(double x, double y, float scaleX, float scaleY, float rotate, int uOffset, int vOffset, int uWidth, int vHeight, int textureWidth, int textureHeight) {
         PoseStack poseStack = new PoseStack();
         poseStack.pushPose();
@@ -21,7 +23,7 @@ public class RenderJSUtils {
         poseStack.popPose();
     }
 
-    @Info("纯色填")
+    @Info("纯色填充\nSolid color filling")
     public static void fillRect(double pX, double pY, int pWidth, int pHeight, int pRed, int pGreen, int pBlue, int pAlpha) {
         Tesselator tesselator = Tesselator.getInstance();
         BufferBuilder pRenderer = tesselator.getBuilder();
@@ -34,5 +36,7 @@ public class RenderJSUtils {
         BufferUploader.drawWithShader(pRenderer.end());
     }
 
-
+    public static int packTextureLight(int positionLight, int skyLight){
+        return LightTexture.pack(positionLight, skyLight);
+    }
 }
