@@ -80,13 +80,13 @@ public class RenderJSGUI extends GuiComponent {
             if (Renderjs.CAN_RENDER) {
                 iterator.next().accept(renderContext);
             }
+        }
 
-            if (needReload && !iterator.hasNext()) {
-                needReload = false;
-                RENDER_LIST.clear();
-                RENDER_LIST.addAll(READY_RENDER_LIST);
-                READY_RENDER_LIST.clear();
-            }
+        if (needReload) {
+            needReload = false;
+            RENDER_LIST.clear();
+            RENDER_LIST.addAll(READY_RENDER_LIST);
+            READY_RENDER_LIST.clear();
         }
     }
 
@@ -131,12 +131,12 @@ public class RenderJSGUI extends GuiComponent {
     }
 
     @Info("绘制物品\n Draw Item")
-    public void renderItem(ItemStack itemStack, int x, int y) {
+    public void renderItem1(ItemStack itemStack, int x, int y) {
         itemRenderer.renderAndDecorateItem(itemStack, x, y);
     }
 
     @Info("绘制物品\n Draw Item")
-    public void renderItem(ItemStack itemStack, PoseStack poseStack, int x, int y) {
+    public void renderItem2(ItemStack itemStack, PoseStack poseStack, int x, int y) {
         BakedModel bakedModel = itemRenderer.getModel(itemStack, null, null, 0);
         itemRenderer.textureManager.getTexture(InventoryMenu.BLOCK_ATLAS).setFilter(false, false);
         RenderSystem.setShaderTexture(0, InventoryMenu.BLOCK_ATLAS);

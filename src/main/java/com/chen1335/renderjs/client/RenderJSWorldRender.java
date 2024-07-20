@@ -61,12 +61,13 @@ public class RenderJSWorldRender {
                 if (Renderjs.CAN_RENDER) {
                     consumerIterator.next().accept(RenderContext.getContext().update(event, getInstance().getRenderBuffers().bufferSource()));
                 }
+            }
 
-                if (needReload && consumerIterator.hasNext()) {
-                    RENDER_LIST.clear();
-                    RENDER_LIST.addAll(READY_RENDER_LIST);
-                    READY_RENDER_LIST.clear();
-                }
+            if (needReload) {
+                needReload=false;
+                RENDER_LIST.clear();
+                RENDER_LIST.addAll(READY_RENDER_LIST);
+                READY_RENDER_LIST.clear();
             }
             RenderSystem.enableDepthTest();
         }
