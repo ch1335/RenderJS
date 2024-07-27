@@ -1,13 +1,20 @@
 package com.chen1335.renderjs.kubejs.bindings;
 
+import com.chen1335.renderjs.client.RenderJSWorldRender;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Vector3f;
 import dev.latvian.mods.kubejs.typings.Info;
+import net.minecraft.client.Camera;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.lighting.SkyLightEngine;
+import net.minecraft.world.phys.Vec3;
+
+import java.awt.*;
 
 @Info("主要给RenderJSItemDecorator和gui使用")
 public class RenderJSUtils {
@@ -36,7 +43,21 @@ public class RenderJSUtils {
         BufferUploader.drawWithShader(pRenderer.end());
     }
 
-    public static int packTextureLight(int positionLight, int skyLight){
+    public static int packTextureLight(int positionLight, int skyLight) {
         return LightTexture.pack(positionLight, skyLight);
+    }
+
+
+    @Info("rgba颜色转10进制")
+    public static int rgbaColor(int r, int g, int b, int a) {
+        return new Color(r, g, b, a).getRGB();
+    }
+
+
+    @Info("will change the input poseStack")
+    public static PoseStack getPoseStackByBlockPose(BlockPos blockPos, PoseStack poseStack) {
+        Vec3 cameraPosition = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
+        poseStack.translate(blockPos.getX() - cameraPosition.x, blockPos.getY() - cameraPosition.y, blockPos.getZ() - cameraPosition.z);
+        return poseStack;
     }
 }

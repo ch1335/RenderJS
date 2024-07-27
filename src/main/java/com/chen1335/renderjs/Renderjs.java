@@ -42,8 +42,6 @@ public class Renderjs {
     public static void reloadRenders() {
         disableRender();
         RenderJSItemDecoratorHandler.clearRender();
-        RenderJSGUI.clearOld();
-        RenderJSWorldRender.clearOld();
         RenderJSEvents.REGISTER_ITEM_DECORATIONS.post(new ItemDecorationsRegisterEvent());
         RenderJSEvents.ADD_GUI_RENDER.post(new AddGuiRenderEvent());
         RenderJSEvents.ADD_WORLD_RENDER.post(new AddWorldRenderEvent());

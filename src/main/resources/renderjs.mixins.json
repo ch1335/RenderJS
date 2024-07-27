@@ -4,12 +4,14 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "renderjs.mixins.refmap.json",
   "mixins": [
-	"LivingEntityMixin"
+    "LivingEntityMixin",
+    "PainterMixin"
   ],
   "minVersion": "0.8",
   "client": [
-	"ItemRendererMixin",
-	"KubeJSClientMixin",
-	"ScriptManagerMixin"
+    "BlockEntityRenderDispatcherMixin",
+    "ItemRendererMixin",
+    "KubeJSClientMixin",
+    "ScriptManagerMixin"
   ]
 }

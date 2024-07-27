@@ -42,7 +42,6 @@ public class RenderJSGUI extends GuiComponent {
 
     public static boolean needReload = false;
 
-    @HideFromJS
     public static RenderJSGUI getInstance() {
         return Renderjs.renderJSGUI;
     }
@@ -52,9 +51,6 @@ public class RenderJSGUI extends GuiComponent {
         needReload = true;
     }
 
-    public static void clearOld(){
-        READY_RENDER_LIST.clear();
-    }
     @HideFromJS
     @SubscribeEvent
     public static void RenderGuiEvent(RenderGuiEvent.Post event) {
@@ -185,5 +181,15 @@ public class RenderJSGUI extends GuiComponent {
             this.partialTick = event.getPartialTick();
             return this;
         }
+    }
+
+    @Override
+    public void hLine(@NotNull PoseStack pPoseStack, int pMinX, int pMaxX, int pY, int pColor){
+        super.hLine(pPoseStack, pMinX, pMaxX, pY, pColor);
+    }
+
+    @Override
+    public void vLine(@NotNull PoseStack pPoseStack, int pX, int pMinY, int pMaxY, int pColor){
+        super.vLine(pPoseStack, pX, pMinY, pMaxY, pColor);
     }
 }

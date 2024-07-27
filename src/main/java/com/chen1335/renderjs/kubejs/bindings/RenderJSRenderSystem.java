@@ -1,11 +1,11 @@
-package com.chen1335.renderjs.kubejs.client;
+package com.chen1335.renderjs.kubejs.bindings;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.latvian.mods.kubejs.typings.Info;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 
-@Info("部分RenderSystem常用方法,使用完整方法请loadClass原版RenderSystem类")
+@Info("部分RenderSystem常用方法")
 public class RenderJSRenderSystem extends RenderSystem {
 
 
