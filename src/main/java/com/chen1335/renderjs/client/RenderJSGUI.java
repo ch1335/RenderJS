@@ -18,7 +18,6 @@ import org.joml.Matrix4f;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.function.Consumer;
 
 @Mod.EventBusSubscriber(modid = Renderjs.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
@@ -27,7 +26,12 @@ public class RenderJSGUI extends GuiGraphics {
     @HideFromJS
     public static RenderJSGUI instance;
     @HideFromJS
-    public static ArrayList<Consumer<RenderJSGUI.renderContext>> renderList = new ArrayList<>();
+    public static ArrayList<Consumer<RenderJSGUI.renderContext>> RENDER_LIST = new ArrayList<>();
+
+    public static ArrayList<Consumer<RenderJSGUI.renderContext>> READY_RENDER_LIST = new ArrayList<>();
+
+    public static boolean needReload = false;
+
     private final Minecraft minecraft;
 
     public RenderJSGUI(Minecraft minecraft) {
@@ -41,7 +45,7 @@ public class RenderJSGUI extends GuiGraphics {
     }
 
     public static void clearRender() {
-        renderList.clear();
+        RENDER_LIST.clear();
     }
 
     @HideFromJS
@@ -52,70 +56,61 @@ public class RenderJSGUI extends GuiGraphics {
 
     @HideFromJS
     public void addRender(Consumer<RenderJSGUI.renderContext> consumer) {
-        renderList.add(consumer);
+        READY_RENDER_LIST.add(consumer);
     }
 
     @HideFromJS
     private void render(renderContext renderContext) {
-        Iterator<Consumer<RenderJSGUI.renderContext>> iterator = renderList.iterator();
-        while (iterator.hasNext()) {
-            iterator.next().accept(renderContext);
+
+        for (Consumer<RenderJSGUI.renderContext> renderContextConsumer : RENDER_LIST) {
+            renderContextConsumer.accept(renderContext);
+        }
+
+        if (needReload) {
+            needReload = false;
+            RENDER_LIST.clear();
+            RENDER_LIST.addAll(READY_RENDER_LIST);
+            READY_RENDER_LIST.clear();
         }
     }
 
-    @Info("绘制居中字符串")
-    public void drawCenteredStringJS(Font font,
-                                     Component component,
-                                     int x,
-                                     int y,
-                                     int color) {
+    @HideFromJS
+    public static void reload() {
+        needReload = true;
+    }
+
+
+    @Info("drawCenteredString")
+    public void drawCenteredStringJS(Font font, Component component, int x, int y, int color) {
         this.drawCenteredString(font, component, x, y, color);
     }
 
-    @Info("绘制字符串")
-    public void drawStringJS(Font font,
-                             Component component,
-                             int x,
-                             int y,
-                             int color,
-                             boolean dropShadow) {
+    @Info("drawString")
+    public void drawStringJS(Font font, Component component, int x, int y, int color, boolean dropShadow) {
         this.drawString(font, component, x, y, color, dropShadow);
     }
 
-    @Info(value = "绘制字符串")
-    public void drawInBatchJS(Component pText,
-                              float pX,
-                              float pY,
-                              int pColor,
-                              boolean pDropShadow,
-                              Matrix4f pMatrix,
-                              MultiBufferSource pBuffer,
-                              Font.DisplayMode pDisplayMode,
-                              int pBackgroundColor,
-                              int pPackedLightCoords) {
+    @Info(value = "drawString")
+    public void drawInBatchJS(Component pText, float pX, float pY, int pColor, boolean pDropShadow, Matrix4f pMatrix, MultiBufferSource pBuffer, Font.DisplayMode pDisplayMode, int pBackgroundColor, int pPackedLightCoords) {
         this.getFont().drawInBatch(pText, pX, pY, pColor, pDropShadow, pMatrix, pBuffer, pDisplayMode, pBackgroundColor, pPackedLightCoords);
     }
 
-    @Info("rgba颜色转10进制")
-    public int rgbaColor(int r,
-                         int g,
-                         int b,
-                         int a) {
+    @Info("rgba color to int color")
+    public int rgbaColor(int r, int g, int b, int a) {
         return new Color(r, g, b, a).getRGB();
     }
 
-    @Info("绘制图片,总图片大小默认256x256")
-    public void blitJS(ResourceLocation pAtlasLocation,
-                       int x,
-                       int y,
-                       int uOffset,
-                       int vOffset,
-                       int uWidth,
-                       int vHeight) {
-        super.blit(pAtlasLocation, x, y, uOffset, vOffset, uWidth, vHeight);
+    @Info("drawTexture,Texture size:256x256")
+    public void blitJS(ResourceLocation textureLocation, int x, int y, int uOffset, int vOffset, int uWidth, int vHeight) {
+        this.blitJS(textureLocation, x, y,0, uOffset, vOffset, uWidth, vHeight,255,255);
     }
 
-    @Info("获取font")
+    @Info("drawTexture")
+    public void blitJS(ResourceLocation textureLocation, int x, int y, int blitOffset, float uOffset, float vOffset, int uWidth, int vHeight, int textureWidth, int textureHeight) {
+        super.blit(textureLocation, x, y, blitOffset, uOffset, vOffset, uWidth, vHeight, textureWidth, textureHeight);
+    }
+
+    @Info("get font")
     public Font getFont() {
         return this.minecraft.font;
     }

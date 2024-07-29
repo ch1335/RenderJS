@@ -36,7 +36,8 @@ public class Renderjs {
         RenderJSEvents.REGISTER_ITEM_DECORATIONS.post(new ItemDecorationsRegisterEvent());
         RenderJSEvents.ADD_GUI_RENDER.post(new AddGuiRenderEvent());
         RenderJSEvents.ADD_WORLD_RENDER.post(new AddWorldRenderEvent());
-
+        RenderJSGUI.reload();
+        RenderJSWorldRender.reload();
     }
 
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
@@ -44,6 +45,7 @@ public class Renderjs {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
             RenderJSGUI.instance = new RenderJSGUI(Minecraft.getInstance());
+            RenderJSWorldRender.init();
             if (ModList.get().isLoaded("probejs")) {
                 LOGGER.info("You have Probejs! Good!");
             }

@@ -28,6 +28,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
+import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.joml.Matrix4f;
@@ -39,13 +40,21 @@ import java.util.function.Consumer;
 
 @Mod.EventBusSubscriber(modid = Renderjs.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class RenderJSWorldRender {
-    private static final Minecraft minecraft = Minecraft.getInstance();
+    private static Minecraft minecraft;
     private static final RenderJSWorldRender instance = new RenderJSWorldRender();
     public static ArrayList<Consumer<RenderContext>> RENDER_LIST = new ArrayList<>();
+
+    public static ArrayList<Consumer<RenderContext>> READY_RENDER_LIST = new ArrayList<>();
+
+    public static boolean needReload = false;
 
     @HideFromJS
     public static RenderJSWorldRender getInstance() {
         return instance;
+    }
+
+    public static void init() {
+        minecraft = Minecraft.getInstance();
     }
 
     @SubscribeEvent
@@ -54,12 +63,23 @@ public class RenderJSWorldRender {
             RenderSystem.disableDepthTest();
             Iterator<Consumer<RenderContext>> consumerIterator = RENDER_LIST.iterator();
             if (consumerIterator.hasNext()) {
-                consumerIterator.next().accept(RenderContext.getInstance().setParam(event, getInstance().getRenderBuffers().bufferSource()));
+                consumerIterator.next().accept(RenderContext.getInstance().setParam(event, getRenderBuffers().bufferSource()));
+            }
+            if (needReload) {
+                needReload=false;
+                RENDER_LIST.clear();
+                RENDER_LIST.addAll(READY_RENDER_LIST);
+                READY_RENDER_LIST.clear();
             }
             RenderSystem.enableDepthTest();
         }
     }
+    @HideFromJS
+    public static void reload() {
+        needReload=true;
+    }
 
+    @HideFromJS
     public static void clearRender() {
         RENDER_LIST.clear();
     }
@@ -80,48 +100,44 @@ public class RenderJSWorldRender {
     }
 
     public void addWorldRender(Consumer<RenderContext> consumer) {
-        RENDER_LIST.add(consumer);
+        READY_RENDER_LIST.add(consumer);
     }
 
-    @Info("RenderType使用这个可以使渲染出来的方块穿透地形(BlockOutLine请使用getTopLayerLineType())")
-    public RenderType getTopLayerType() {
+    @Info("RenderType uses this to make the rendered blocks penetrate the terrain (BlockOutLine, please use getTopLayerLineType())")
+    public static RenderType getTopLayerType() {
         return ModRenderType.TOP_LAYER_TARGET;
     }
 
-    @Info("BlockOutLine的RenderType使用这个可以使渲染出来的方块穿透地形")
-    public RenderType getTopLayerLineType() {
+    @Info("The RenderType of BlockOutLine can be used to make the rendered blocks penetrate the terrain")
+    public static RenderType getTopLayerLineType() {
         return ModRenderType.TOP_LAYER_LINE_TARGET;
     }
 
-    @Info(value = "绘制方块", params = {
-            @Param(name = "renderType", value = "可以为空，穿透地形请使用getTopLayerType()提供的类型")})
-    public void renderBlock1(BlockPos blockPos,
-                             BlockState blockState,
-                             int BlockLight,
-                             int SkyLight,
-                             @Nullable RenderType renderType) {
+    @Info(value = "render block, can only be used in AddWorldRenderEvent", params = {
+            @Param(name = "renderType", value = "@Nullable")})
+    public static void renderBlock1(BlockPos blockPos, BlockState blockState,int packedLight, @Nullable RenderType renderType) {
         MultiBufferSource.BufferSource bufferSource = getRenderBuffers().bufferSource();
         PoseStack poseStack = RenderContext.instance.poseStack;
         Vec3 playerPos = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
         poseStack.pushPose();
         poseStack.translate(blockPos.getX() - playerPos.x, blockPos.getY() - playerPos.y, blockPos.getZ() - playerPos.z);
-        minecraft.getBlockRenderer().renderSingleBlock(blockState, poseStack, bufferSource, LightTexture.pack(BlockLight, SkyLight), OverlayTexture.NO_OVERLAY, net.minecraftforge.client.model.data.ModelData.EMPTY, renderType);
+        minecraft.getBlockRenderer().renderSingleBlock(blockState, poseStack, bufferSource, packedLight, OverlayTexture.NO_OVERLAY, net.minecraftforge.client.model.data.ModelData.EMPTY, renderType);
         poseStack.popPose();
     }
 
-    @Info(value = "绘制方块", params = {@Param(name = "renderType", value = "可以为空，穿透地形请使用getTopLayerType()提供的类型")})
-    public void renderBlock2(PoseStack poseStack,
-                             BlockState blockState,
-                             int BlockLight,
-                             int SkyLight,
-                             @Nullable RenderType renderType) {
-        minecraft.getBlockRenderer().renderSingleBlock(blockState, poseStack, getRenderBuffers().bufferSource(), LightTexture.pack(BlockLight, SkyLight), OverlayTexture.NO_OVERLAY, net.minecraftforge.client.model.data.ModelData.EMPTY, renderType);
+    @Info(value = "render block", params = {@Param(name = "renderType", value = "@Nullable")})
+    public static void renderBlock2(PoseStack poseStack, BlockState blockState,int packedLight, @Nullable RenderType renderType) {
+        minecraft.getBlockRenderer().renderSingleBlock(blockState, poseStack, getRenderBuffers().bufferSource(), packedLight, OverlayTexture.NO_OVERLAY, net.minecraftforge.client.model.data.ModelData.EMPTY, renderType);
     }
 
-    @Info(value = "绘制方块边框线", params = {@Param(name = "renderType", value = "可以为空，穿透地形请使用getTopLayerLineType()提供的类型")})
-    public void renderBlockOutLine1(BlockPos blockPos,
-                                    BlockState blockState,
-                                    @Nullable RenderType renderType) {
+
+    @Info(value = "render block,with full param", params = {@Param(name = "renderType", value = "@Nullable"), @Param(name = "modelData", value = "@Nullable")})
+    public static void renderSingleBlock(BlockState blockState, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay, @Nullable ModelData modelData, RenderType renderType) {
+        minecraft.getBlockRenderer().renderSingleBlock(blockState, poseStack, bufferSource, packedLight, packedOverlay, modelData == null ? ModelData.EMPTY : modelData, renderType);
+    }
+
+    @Info(value = "Drawing block border lines can only be used in AddWorldRenderEvent", params = {@Param(name = "renderType", value = "@Nullable")})
+    public static void renderBlockOutLine1(BlockPos blockPos, BlockState blockState, @Nullable RenderType renderType) {
         if (!blockState.isAir()) {
             MultiBufferSource.BufferSource bufferSource = getRenderBuffers().bufferSource();
             Vec3 playerPos = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
@@ -136,11 +152,8 @@ public class RenderJSWorldRender {
     }
 
 
-    @Info(value = "绘制方块边框线", params = {@Param(name = "renderType", value = "可以为空，穿透地形请使用getTopLayerLineType()提供的类型")})
-    public void renderBlockOutLine2(PoseStack poseStack,
-                                    BlockPos blockPos,
-                                    BlockState blockState,
-                                    @Nullable RenderType renderType) {
+    @Info(value = "render block out lines", params = {@Param(name = "renderType", value = "@Nullable")})
+    public static void renderBlockOutLine2(PoseStack poseStack, BlockPos blockPos, BlockState blockState, @Nullable RenderType renderType) {
         if (!blockState.isAir()) {
             MultiBufferSource.BufferSource bufferSource = getRenderBuffers().bufferSource();
             Vec3 playerPos = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
@@ -150,29 +163,33 @@ public class RenderJSWorldRender {
         }
     }
 
-    @Info(value = "绘制物品")
-    public void renderItem(PoseStack pMatrixStack,
-                           ItemStack itemStack,
-                           int PositionLight,
-                           int SkyLight,
-                           Level level) {
+    @Info(value = "renderItem")
+    public static void renderItem(PoseStack pMatrixStack, ItemStack itemStack, int packedLight, Level level) {
         MultiBufferSource.BufferSource bufferSource = getRenderBuffers().bufferSource();
-        minecraft.getItemRenderer().renderStatic(itemStack, ItemDisplayContext.GROUND, LightTexture.pack(PositionLight, SkyLight), OverlayTexture.NO_OVERLAY, pMatrixStack, bufferSource, level, minecraft.player.getId());
+        minecraft.getItemRenderer().renderStatic(itemStack, ItemDisplayContext.GROUND, packedLight, OverlayTexture.NO_OVERLAY, pMatrixStack, bufferSource, level, minecraft.player.getId());
+    }
+    @Info(value = "renderItem")
+    public static void renderStatic(ItemStack itemStack, ItemDisplayContext itemDisplayContext, int combinedLight, int combinedOverlay, PoseStack poseStack, MultiBufferSource bufferSource, @Nullable Level pLevel, int pSeed) {
+        minecraft.getItemRenderer().renderStatic(itemStack, itemDisplayContext, combinedLight, combinedOverlay, poseStack, bufferSource, pLevel, pSeed);
     }
 
-    public BakedModel getBlockModel(BlockState blockState) {
+    public static BakedModel getBlockModel(BlockState blockState) {
         return minecraft.getBlockRenderer().getBlockModel(blockState);
     }
 
-    public BlockColors getBlockColors() {
+    @Info(value = "getPackedLight")
+    public static int getPackedLight(int BlockLight,int SkyLight){
+        return LightTexture.pack(BlockLight, SkyLight);
+    }
+    public static BlockColors getBlockColors() {
         return minecraft.getBlockColors();
     }
 
-    public RenderBuffers getRenderBuffers() {
+    public static RenderBuffers getRenderBuffers() {
         return minecraft.renderBuffers();
     }
 
-    public ModelBlockRenderer getModelRenderer() {
+    public static ModelBlockRenderer getModelRenderer() {
         return minecraft.getBlockRenderer().getModelRenderer();
     }
 

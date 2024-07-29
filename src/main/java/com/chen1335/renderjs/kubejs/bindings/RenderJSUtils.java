@@ -9,11 +9,10 @@ import net.minecraft.resources.ResourceLocation;
 
 import java.awt.*;
 
-@Info("主要给RenderJSItemDecorator和gui使用")
 public class RenderJSUtils {
 
 
-    @Info("绘制材质(可中心旋转，中心缩放)")
+    @Info("Draw texture (rotatable and scalable)")
     public static void blit(GuiGraphics guiGraphics,
                             ResourceLocation pAtlasLocation,
                             double x,
@@ -37,7 +36,7 @@ public class RenderJSUtils {
         poseStack.popPose();
     }
 
-    @Info(value = "纯色填充")
+
     public static void fill(GuiGraphics guiGraphics,
                             int pMinX,
                             int pMinY,
