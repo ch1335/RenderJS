@@ -18,8 +18,10 @@ public class ScriptManagerMixin {
     @Inject(method = {"reload"}, at = {@At("RETURN")}, remap = false)
     private void reload(CallbackInfo ci) {
         if (this.scriptType == ScriptType.CLIENT) {
-            Renderjs.LOGGER.info("RenderJSReload!");
-            Renderjs.reloadRenders();
+            if (Renderjs.CLIENT_INIT){
+                Renderjs.LOGGER.info("RenderJSReload!");
+                Renderjs.reloadRenders();
+            }
         }
     }
 }

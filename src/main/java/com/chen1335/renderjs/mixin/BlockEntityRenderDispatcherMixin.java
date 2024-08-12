@@ -1,5 +1,6 @@
 package com.chen1335.renderjs.mixin;
 
+
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -16,7 +17,8 @@ public class BlockEntityRenderDispatcherMixin {
     private Map<BlockEntityType<?>, BlockEntityRenderer<?>> renderers;
 
     @Unique
-    public  BlockEntityRenderer<BlockEntity> rjs$getRendererByType(BlockEntityType<BlockEntity> blockEntityType){
-        return (BlockEntityRenderer<BlockEntity>) renderers.get(blockEntityType);
+    public  BlockEntityRenderer<?> rjs$getRendererByType(BlockEntityType<BlockEntity> blockEntityType){
+        return renderers.get(blockEntityType);
     }
+
 }

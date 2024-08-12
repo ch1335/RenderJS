@@ -2,6 +2,7 @@ package com.chen1335.renderjs.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.latvian.mods.kubejs.block.entity.BlockEntityJS;
+import dev.latvian.mods.kubejs.typings.Info;
 import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.model.geom.EntityModelSet;
@@ -12,14 +13,16 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
+import java.util.function.Predicate;
 
 
-public class RenderJSBlockEntityRenderer implements BlockEntityRenderer<BlockEntityJS> {
+public class RenderJSBlockEntityRenderer implements BlockEntityRenderer<BlockEntity> {
     public final BlockEntityRenderDispatcher blockEntityRenderDispatcher;
     public final BlockRenderDispatcher blockRenderDispatcher;
     public final ItemRenderer itemRenderer;
@@ -33,9 +36,11 @@ public class RenderJSBlockEntityRenderer implements BlockEntityRenderer<BlockEnt
 
     private int distance = 64;
 
-    private BiPredicate<BlockEntityJS, Vec3> shouldRenderPredicate = this::defaultShouldRender;
+    private BiPredicate<BlockEntity, Vec3> shouldRenderPredicate = this::defaultShouldRender;
     private BiConsumer<RenderJSBlockEntityRenderer, Context> customRender = (renderer, context) -> {
     };
+
+    private Predicate<BlockEntity> shouldRenderOffScreen = blockEntity -> false;
 
     public RenderJSBlockEntityRenderer(BlockEntityRendererProvider.Context context) {
         blockEntityRenderDispatcher = context.getBlockEntityRenderDispatcher();
@@ -48,13 +53,14 @@ public class RenderJSBlockEntityRenderer implements BlockEntityRenderer<BlockEnt
 
     @HideFromJS
     @Override
-    public void render(@NotNull BlockEntityJS pBlockEntity, float pPartialTick, @NotNull PoseStack pPoseStack, @NotNull MultiBufferSource pBufferSource, int pPackedLight, int pPackedOverlay) {
-        customRender.accept(this, Context.context.update(pBlockEntity, pPartialTick, pPoseStack, pBufferSource, pPackedLight, pPackedOverlay));
+    public void render(@NotNull BlockEntity blockEntity, float pPartialTick, @NotNull PoseStack pPoseStack, @NotNull MultiBufferSource pBufferSource, int pPackedLight, int pPackedOverlay) {
+        customRender.accept(this, Context.context.update(blockEntity, pPartialTick, pPoseStack, pBufferSource, pPackedLight, pPackedOverlay));
     }
 
+
     @Override
-    public boolean shouldRenderOffScreen(@NotNull BlockEntityJS pBlockEntity) {
-        return BlockEntityRenderer.super.shouldRenderOffScreen(pBlockEntity);
+    public boolean shouldRenderOffScreen(@NotNull BlockEntity blockEntity) {
+        return shouldRenderOffScreen.test(blockEntity);
     }
 
     @Override
@@ -63,11 +69,11 @@ public class RenderJSBlockEntityRenderer implements BlockEntityRenderer<BlockEnt
     }
 
     @Override
-    public boolean shouldRender(@NotNull BlockEntityJS pBlockEntity, @NotNull Vec3 pCameraPos) {
+    public boolean shouldRender(@NotNull BlockEntity pBlockEntity, @NotNull Vec3 pCameraPos) {
         return shouldRenderPredicate.test(pBlockEntity, pCameraPos);
     }
 
-    public boolean defaultShouldRender(BlockEntityJS pBlockEntity, Vec3 pCameraPos) {
+    public boolean defaultShouldRender(BlockEntity pBlockEntity, Vec3 pCameraPos) {
         return Vec3.atCenterOf(pBlockEntity.getBlockPos()).closerThan(pCameraPos, this.getViewDistance());
     }
 
@@ -81,16 +87,23 @@ public class RenderJSBlockEntityRenderer implements BlockEntityRenderer<BlockEnt
         return this;
     }
 
-
-    public RenderJSBlockEntityRenderer setShouldRender(BiPredicate<BlockEntityJS, Vec3> predicate) {
+    public RenderJSBlockEntityRenderer setShouldRender(BiPredicate<BlockEntity, Vec3> predicate) {
         shouldRenderPredicate = predicate;
+        return this;
+    }
+
+    public RenderJSBlockEntityRenderer setShouldRenderOffScreen(Predicate<BlockEntity> predicate) {
+        shouldRenderOffScreen = predicate;
         return this;
     }
 
     public static class Context {
         public static final Context context = new Context();
 
-        public BlockEntityJS blockEntityJS;
+        public BlockEntity blockEntity;
+
+        @Info("如果你十分确定以及肯定这个实体是BlockEntityJS类，否则不要使用这个参数")
+        public BlockEntityJS blockEntityJS=null;
         public float partialTick;
 
         public PoseStack poseStack;
@@ -102,8 +115,9 @@ public class RenderJSBlockEntityRenderer implements BlockEntityRenderer<BlockEnt
         public int packedOverlay;
 
         @HideFromJS
-        public Context update(@NotNull BlockEntityJS pBlockEntity, float pPartialTick, @NotNull PoseStack pPoseStack, @NotNull MultiBufferSource pBufferSource, int pPackedLight, int pPackedOverlay) {
-            blockEntityJS = pBlockEntity;
+        public Context update(@NotNull BlockEntity pBlockEntity, float pPartialTick, @NotNull PoseStack pPoseStack, @NotNull MultiBufferSource pBufferSource, int pPackedLight, int pPackedOverlay) {
+            if (pBlockEntity instanceof BlockEntityJS) blockEntityJS = (BlockEntityJS) pBlockEntity;
+            blockEntity = pBlockEntity;
             partialTick = pPartialTick;
             poseStack = pPoseStack;
             bufferSource = pBufferSource;

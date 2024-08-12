@@ -19,25 +19,30 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 
+import java.io.IOException;
+
 @Mod(Renderjs.MODID)
 public class Renderjs {
     public static final String MODID = "renderjs";
     public static final Logger LOGGER = LogUtils.getLogger();
+
+    public static boolean CLIENT_INIT = false;
 
     public Renderjs() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         modEventBus.addListener(RenderJSItemDecoratorHandler::RegisterItemDecorationsEvent);
         MinecraftForge.EVENT_BUS.register(this);
     }
-
     public static void reloadRenders() {
-        RenderJSGUI.clearRender();
-        RenderJSWorldRender.clearRender();
-        RenderJSEvents.REGISTER_ITEM_DECORATIONS.post(new ItemDecorationsRegisterEvent());
-        RenderJSEvents.ADD_GUI_RENDER.post(new AddGuiRenderEvent());
-        RenderJSEvents.ADD_WORLD_RENDER.post(new AddWorldRenderEvent());
-        RenderJSGUI.reload();
-        RenderJSWorldRender.reload();
+        if (CLIENT_INIT) {
+            RenderJSGUI.clearRender();
+            RenderJSWorldRender.clearRender();
+            RenderJSEvents.REGISTER_ITEM_DECORATIONS.post(new ItemDecorationsRegisterEvent());
+            RenderJSEvents.ADD_GUI_RENDER.post(new AddGuiRenderEvent());
+            RenderJSEvents.ADD_WORLD_RENDER.post(new AddWorldRenderEvent());
+            RenderJSGUI.reload();
+            RenderJSWorldRender.reload();
+        }
     }
 
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
@@ -46,6 +51,7 @@ public class Renderjs {
         public static void onClientSetup(FMLClientSetupEvent event) {
             RenderJSGUI.instance = new RenderJSGUI(Minecraft.getInstance());
             RenderJSWorldRender.init();
+            CLIENT_INIT = true;
             if (ModList.get().isLoaded("probejs")) {
                 LOGGER.info("You have Probejs! Good!");
             }
