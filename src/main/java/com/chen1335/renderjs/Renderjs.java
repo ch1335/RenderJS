@@ -19,8 +19,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 
-import java.io.IOException;
-
 @Mod(Renderjs.MODID)
 public class Renderjs {
     public static final String MODID = "renderjs";
