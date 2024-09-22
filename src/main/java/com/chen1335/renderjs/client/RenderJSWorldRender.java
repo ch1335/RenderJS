@@ -1,7 +1,7 @@
 package com.chen1335.renderjs.client;
 
-import com.chen1335.renderjs.Renderjs;
-import com.chen1335.renderjs.client.renderer.ModRenderType;
+import com.chen1335.renderjs.RenderJS;
+import com.chen1335.renderjs.client.renderer.RenderJSRenderType;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -38,7 +38,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.function.Consumer;
 
-@Mod.EventBusSubscriber(modid = Renderjs.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
+@Mod.EventBusSubscriber(modid = RenderJS.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class RenderJSWorldRender {
     private static Minecraft minecraft;
     private static final RenderJSWorldRender instance = new RenderJSWorldRender();
@@ -105,12 +105,12 @@ public class RenderJSWorldRender {
 
     @Info("RenderType uses this to make the rendered blocks penetrate the terrain (BlockOutLine, please use getTopLayerLineType())")
     public static RenderType getTopLayerType() {
-        return ModRenderType.TOP_LAYER_TARGET;
+        return RenderJSRenderType.TOP_LAYER_TARGET;
     }
 
     @Info("The RenderType of BlockOutLine can be used to make the rendered blocks penetrate the terrain")
     public static RenderType getTopLayerLineType() {
-        return ModRenderType.TOP_LAYER_LINE_TARGET;
+        return RenderJSRenderType.TOP_LAYER_LINE_TARGET;
     }
 
     @Info(value = "render block, can only be used in AddWorldRenderEvent", params = {

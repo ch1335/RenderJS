@@ -66,12 +66,6 @@ public abstract class BlockEntityMixin implements IForgeBlockEntity {
                 }
                 catch (Exception e)
                 {
-                    // We have to capture any exceptions that may occur here because BUKKIT servers like to send
-                    // the tile entity data BEFORE the chunk data, you know, the OPPOSITE of what vanilla does!
-                    // So we can not GUARANTEE that the world state is the real state for the block...
-                    // So, once again in the long line of US having to accommodate BUKKIT breaking things,
-                    // here it is, assume that the TE is only 1 cubic block. Problem with this is that it may
-                    // cause the TileEntity renderer to error further down the line! But alas, nothing we can do.
                     cbb = new net.minecraft.world.phys.AABB(pos.offset(-1, 0, -1), pos.offset(1, 1, 1));
                 }
                 if (cbb != null) bb = cbb;

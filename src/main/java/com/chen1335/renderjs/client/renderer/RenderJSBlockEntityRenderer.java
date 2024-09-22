@@ -1,10 +1,15 @@
 package com.chen1335.renderjs.client.renderer;
 
+import com.chen1335.renderjs.API.IGuiRenderHelper;
+import com.chen1335.renderjs.API.ILevelRenderHelper;
+import com.chen1335.renderjs.API.IRenderJSPoseStackHelper;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.latvian.mods.kubejs.block.entity.BlockEntityJS;
 import dev.latvian.mods.kubejs.typings.Info;
 import dev.latvian.mods.rhino.util.HideFromJS;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
@@ -54,6 +59,7 @@ public class RenderJSBlockEntityRenderer implements BlockEntityRenderer<BlockEnt
     @HideFromJS
     @Override
     public void render(@NotNull BlockEntity blockEntity, float pPartialTick, @NotNull PoseStack pPoseStack, @NotNull MultiBufferSource pBufferSource, int pPackedLight, int pPackedOverlay) {
+
         customRender.accept(this, Context.context.update(blockEntity, pPartialTick, pPoseStack, pBufferSource, pPackedLight, pPackedOverlay));
     }
 
@@ -97,13 +103,16 @@ public class RenderJSBlockEntityRenderer implements BlockEntityRenderer<BlockEnt
         return this;
     }
 
-    public static class Context {
+
+    public static class Context implements ILevelRenderHelper, IGuiRenderHelper, IRenderJSPoseStackHelper {
         public static final Context context = new Context();
+
+        private GuiGraphics guiGraphics = null;
 
         public BlockEntity blockEntity;
 
         @Info("如果你十分确定以及肯定这个实体是BlockEntityJS类，否则不要使用这个参数")
-        public BlockEntityJS blockEntityJS=null;
+        public BlockEntityJS blockEntityJS = null;
         public float partialTick;
 
         public PoseStack poseStack;
@@ -117,6 +126,7 @@ public class RenderJSBlockEntityRenderer implements BlockEntityRenderer<BlockEnt
         @HideFromJS
         public Context update(@NotNull BlockEntity pBlockEntity, float pPartialTick, @NotNull PoseStack pPoseStack, @NotNull MultiBufferSource pBufferSource, int pPackedLight, int pPackedOverlay) {
             if (pBlockEntity instanceof BlockEntityJS) blockEntityJS = (BlockEntityJS) pBlockEntity;
+            getGuiGraphics().pose = pPoseStack;
             blockEntity = pBlockEntity;
             partialTick = pPartialTick;
             poseStack = pPoseStack;
@@ -124,6 +134,20 @@ public class RenderJSBlockEntityRenderer implements BlockEntityRenderer<BlockEnt
             packedLight = pPackedLight;
             packedOverlay = pPackedOverlay;
             return this;
+        }
+
+        @Override
+        public GuiGraphics getGuiGraphics() {
+            if (guiGraphics == null) {
+                guiGraphics = new GuiGraphics(Minecraft.getInstance(), Minecraft.getInstance().renderBuffers().bufferSource());
+            }
+            return guiGraphics;
+        }
+
+
+        @Override
+        public PoseStack getPoseStack() {
+            return poseStack;
         }
     }
 }

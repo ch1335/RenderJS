@@ -1,6 +1,6 @@
 package com.chen1335.renderjs.client;
 
-import com.chen1335.renderjs.Renderjs;
+import com.chen1335.renderjs.RenderJS;
 import com.mojang.blaze3d.platform.Window;
 import dev.latvian.mods.kubejs.typings.Info;
 import dev.latvian.mods.rhino.util.HideFromJS;
@@ -20,7 +20,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.function.Consumer;
 
-@Mod.EventBusSubscriber(modid = Renderjs.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
+@Mod.EventBusSubscriber(modid = RenderJS.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class RenderJSGUI extends GuiGraphics {
 
     @HideFromJS

@@ -1,21 +1,36 @@
 package com.chen1335.renderjs.client.events;
 
+import com.chen1335.renderjs.API.IGuiRenderHelper;
 import com.chen1335.renderjs.client.ModItemDecorator.RenderJSItemDecorator;
 import com.chen1335.renderjs.client.ModItemDecorator.RenderJSItemDecoratorHandler;
 import dev.latvian.mods.kubejs.event.EventJS;
 import dev.latvian.mods.kubejs.typings.Info;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.item.Item;
 
 import java.util.function.Consumer;
 
 public class ItemDecorationsRegisterEvent extends EventJS {
-    @Info("注册一个ItemDecorator,如果之前已经注册则返回之前注册的ItemDecorator,reload时会自动将新内容更新到对应的ItemDecorator")
-    public RenderJSItemDecorator register(Item item, String id, Consumer<RenderJSItemDecorator.renderContext> consumer) {
-        return RenderJSItemDecoratorHandler.getInstance().register(item, id, consumer);
+    @Deprecated
+    @Info("don't use this,This method will be removed in the future")
+    public void register(Item item, String id, Consumer<RenderJSItemDecorator.RenderContext> consumer) {
+        this.register(item,consumer);
     }
 
-    @Info("为所有物品注册一个ItemDecorator")
-    public RenderJSItemDecorator registerForAllItem(String id, Consumer<RenderJSItemDecorator.renderContext> consumer) {
-        return RenderJSItemDecoratorHandler.getInstance().registerForAllItem(id, consumer);
+    @Deprecated
+    @Info("don't use this,This method will be removed in the future")
+    public void registerForAllItem(String id, Consumer<RenderJSItemDecorator.RenderContext> consumer) {
+        this.registerForAllItem(consumer);
     }
+
+    @Info("Register an ItemDecorator, and if it has already been registered, return the previously registered ItemDecorator. \nWhen reloading, the new content will be automatically updated to the corresponding ItemDecorator")
+    public void register(Item item, Consumer<RenderJSItemDecorator.RenderContext> consumer) {
+        RenderJSItemDecoratorHandler.getInstance().register(item, consumer);
+    }
+
+    @Info("Register an ItemDecorator for all items")
+    public void registerForAllItem(Consumer<RenderJSItemDecorator.RenderContext> consumer) {
+        RenderJSItemDecoratorHandler.getInstance().registerForAllItem(consumer);
+    }
+
 }
