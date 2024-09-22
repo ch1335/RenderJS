@@ -7,7 +7,9 @@ import dev.latvian.mods.kubejs.typings.Info;
 import java.util.function.Consumer;
 
 public class AddWorldRenderEvent extends EventJS {
-    @Info("添加render")
+
+    @Deprecated
+    @Info("Add Render, has deprecated and will be remove in the future,don's use this")
     public void addWorldRender(Consumer<RenderJSWorldRender.RenderContext> consumer) {
         RenderJSWorldRender.getInstance().addWorldRender(consumer);
     }
