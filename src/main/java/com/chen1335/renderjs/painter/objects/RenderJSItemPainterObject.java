@@ -46,4 +46,12 @@ public class RenderJSItemPainterObject extends ItemObject implements IRenderJSPa
     public RenderJSPainter.Step getStep() {
         return step;
     }
+
+    @Override
+    public boolean visible() {
+        if (eventJS == null) {
+            return false;
+        }
+        return visible.getBoolean(eventJS);
+    }
 }

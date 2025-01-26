@@ -1,18 +1,15 @@
 package com.chen1335.renderjs.client.ModItemDecorator;
 
-import com.chen1335.renderjs.Renderjs;
+import com.chen1335.renderjs.RenderJS;
 import com.chen1335.renderjs.client.events.ItemDecorationsRegisterEvent;
 import com.chen1335.renderjs.kubejs.bindings.event.RenderJSEvents;
 import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RegisterItemDecorationsEvent;
 
 import java.util.HashMap;
 import java.util.function.Consumer;
 
-@OnlyIn(Dist.CLIENT)
 public class RenderJSItemDecoratorHandler {
     @HideFromJS
     private static final HashMap<Item, RenderJSItemDecorator> registeredItemDecorators = new HashMap<>();
@@ -25,7 +22,7 @@ public class RenderJSItemDecoratorHandler {
 
     @HideFromJS
     public static RenderJSItemDecoratorHandler getInstance() {
-        return Renderjs.itemDecoratorHandler;
+        return RenderJS.itemDecoratorHandler;
     }
 
     public static void clearRender() {

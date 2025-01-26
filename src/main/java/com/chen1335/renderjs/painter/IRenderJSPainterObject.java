@@ -7,4 +7,6 @@ public interface IRenderJSPainterObject {
 
     RenderJSPainter.Layer getLayer();
     RenderJSPainter.Step getStep();
+
+    boolean visible();
 }

@@ -52,4 +52,12 @@ public class RenderJSTextPainterObject extends TextObject implements IRenderJSPa
     public RenderJSPainter.Step getStep() {
         return step;
     }
+
+    @Override
+    public boolean visible() {
+        if (eventJS == null) {
+            return false;
+        }
+        return visible.getBoolean(eventJS);
+    }
 }

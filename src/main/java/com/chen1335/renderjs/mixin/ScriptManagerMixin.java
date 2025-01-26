@@ -1,6 +1,6 @@
 package com.chen1335.renderjs.mixin;
 
-import com.chen1335.renderjs.Renderjs;
+import com.chen1335.renderjs.RenderJS;
 import dev.latvian.mods.kubejs.script.ScriptManager;
 import dev.latvian.mods.kubejs.script.ScriptType;
 import org.spongepowered.asm.mixin.Final;
@@ -19,7 +19,21 @@ public class ScriptManagerMixin {
     @Inject(method = {"load"}, at = {@At("RETURN")}, remap = false)
     private void onLoad(CallbackInfo ci) {
         if (this.scriptType == ScriptType.CLIENT) {
-            Renderjs.reloadRenders();
+            RenderJS.reloadRenders();
+        }
+    }
+
+    @Inject(method = {"unload"}, at = {@At("HEAD")}, remap = false)
+    private void unload(CallbackInfo ci) {
+        if (this.scriptType == ScriptType.CLIENT) {
+            RenderJS.disableRender();
+        }
+    }
+
+    @Inject(method = {"load"}, at = {@At("RETURN")}, remap = false)
+    private void load(CallbackInfo ci) {
+        if (this.scriptType == ScriptType.CLIENT) {
+            RenderJS.enableRender();
         }
     }
 }

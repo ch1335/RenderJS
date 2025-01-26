@@ -1,6 +1,6 @@
 package com.chen1335.renderjs.client;
 
-import com.chen1335.renderjs.Renderjs;
+import com.chen1335.renderjs.RenderJS;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.platform.Window;
@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.function.Consumer;
 
-@Mod.EventBusSubscriber(modid = Renderjs.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
+@Mod.EventBusSubscriber(modid = RenderJS.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class RenderJSGUI extends GuiComponent {
     public static ArrayList<Consumer<RenderContext>> RENDER_LIST = new ArrayList<>();
 
@@ -43,7 +43,7 @@ public class RenderJSGUI extends GuiComponent {
     public static boolean needReload = false;
 
     public static RenderJSGUI getInstance() {
-        return Renderjs.renderJSGUI;
+        return RenderJS.renderJSGUI;
     }
 
     @HideFromJS
@@ -73,7 +73,7 @@ public class RenderJSGUI extends GuiComponent {
 
 
         while (iterator.hasNext()) {
-            if (Renderjs.CAN_RENDER) {
+            if (RenderJS.CAN_RENDER) {
                 iterator.next().accept(renderContext);
             }
         }

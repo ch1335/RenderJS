@@ -1,6 +1,6 @@
 package com.chen1335.renderjs.painter;
 
-import com.chen1335.renderjs.Renderjs;
+import com.chen1335.renderjs.RenderJS;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.latvian.mods.kubejs.client.painter.Painter;
 import dev.latvian.mods.kubejs.client.painter.screen.ScreenPainterObject;
@@ -11,7 +11,7 @@ import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-@Mod.EventBusSubscriber(modid = Renderjs.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
+@Mod.EventBusSubscriber(modid = RenderJS.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class RenderJSPainter {
     public enum Layer {
         hud,
@@ -51,7 +51,7 @@ public class RenderJSPainter {
     @HideFromJS
     private static void render(PoseStack poseStack, Layer layer, Step step) {
         for (ScreenPainterObject screenObject : Painter.INSTANCE.getScreenObjects()) {
-            if (screenObject instanceof IRenderJSPainterObject object && object.getLayer() == layer && object.getStep() == step) {
+            if (screenObject instanceof IRenderJSPainterObject object && object.visible() && object.getLayer() == layer && object.getStep() == step) {
                 object.draw(poseStack);
             }
         }

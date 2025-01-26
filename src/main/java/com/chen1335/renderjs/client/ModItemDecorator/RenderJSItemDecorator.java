@@ -1,6 +1,9 @@
 package com.chen1335.renderjs.client.ModItemDecorator;
 
-import com.chen1335.renderjs.Renderjs;
+import com.chen1335.renderjs.API.IGuiRenderHelper;
+import com.chen1335.renderjs.API.IRenderJSPoseStackHelper;
+import com.chen1335.renderjs.RenderJS;
+import com.mojang.blaze3d.vertex.PoseStack;
 import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.client.gui.Font;
 import net.minecraft.world.item.ItemStack;
@@ -25,7 +28,7 @@ public class RenderJSItemDecorator implements IItemDecorator {
 
     @HideFromJS
     public boolean render(Font font, ItemStack itemStack, int xOffset, int yOffset, float blitOffset) {
-        if (Renderjs.CAN_RENDER) {
+        if (RenderJS.CAN_RENDER) {
             consumers.forEach(consumer -> consumer.accept(RenderContext.getContext().update(font, itemStack, xOffset, yOffset, blitOffset)));
         }
         return true;
@@ -39,7 +42,7 @@ public class RenderJSItemDecorator implements IItemDecorator {
         consumers.clear();
     }
 
-    public static class RenderContext {
+    public static class RenderContext implements IGuiRenderHelper, IRenderJSPoseStackHelper {
         private static final RenderContext context = new RenderContext(null, null, 0, 0, 0);
         public Font font;
         public ItemStack itemStack;
@@ -66,6 +69,11 @@ public class RenderJSItemDecorator implements IItemDecorator {
             this.yOffset = yOffset;
             this.blitOffset = blitOffset;
             return this;
+        }
+
+        @Override
+        public PoseStack getPoseStack() {
+            return IGuiRenderHelper.guiRenderHelper.getPoseStack();
         }
     }
 }

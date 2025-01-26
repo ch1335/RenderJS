@@ -7,7 +7,8 @@ import dev.latvian.mods.kubejs.typings.Info;
 import java.util.function.Consumer;
 
 public class AddGuiRenderEvent extends EventJS {
-    @Info("添加render\n Add Render")
+    @Deprecated
+    @Info("Add Render, has deprecated and will be remove in the future,don's use this")
     public void addRender(Consumer<RenderJSGUI.RenderContext> consumer) {
         RenderJSGUI.addRender(consumer);
     }

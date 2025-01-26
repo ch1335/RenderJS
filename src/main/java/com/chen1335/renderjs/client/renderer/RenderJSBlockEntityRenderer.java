@@ -1,5 +1,8 @@
 package com.chen1335.renderjs.client.renderer;
 
+import com.chen1335.renderjs.API.IGuiRenderHelper;
+import com.chen1335.renderjs.API.ILevelRenderHelper;
+import com.chen1335.renderjs.API.IRenderJSPoseStackHelper;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.latvian.mods.kubejs.block.entity.BlockEntityJS;
 import dev.latvian.mods.rhino.util.HideFromJS;
@@ -87,7 +90,7 @@ public class RenderJSBlockEntityRenderer implements BlockEntityRenderer<BlockEnt
         return this;
     }
 
-    public static class Context {
+    public static class Context implements ILevelRenderHelper, IGuiRenderHelper, IRenderJSPoseStackHelper {
         public static final Context context = new Context();
 
         public BlockEntityJS blockEntityJS;
@@ -110,6 +113,11 @@ public class RenderJSBlockEntityRenderer implements BlockEntityRenderer<BlockEnt
             packedLight = pPackedLight;
             packedOverlay = pPackedOverlay;
             return this;
+        }
+
+        @Override
+        public PoseStack getPoseStack() {
+            return poseStack;
         }
     }
 }

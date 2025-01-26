@@ -102,4 +102,11 @@ public class RenderJSTexturePainterObject extends RenderJSPainterObject {
         poseStack.popPose();
     }
 
+    @Override
+    public boolean visible() {
+        if (eventJS == null) {
+            return false;
+        }
+        return visible.getBoolean(eventJS);
+    }
 }

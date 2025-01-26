@@ -1,0 +1,60 @@
+package com.chen1335.renderjs.API;
+
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Matrix4f;
+import net.minecraft.client.Camera;
+import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.culling.Frustum;
+import net.minecraftforge.client.event.RenderLevelStageEvent;
+
+public interface ILevelRenderEvent extends IRenderJSEvent{
+
+    RenderLevelStageEvent getEvent();
+
+    default RenderLevelStageEvent.Stage getStage()
+    {
+        return getEvent().getStage();
+    }
+
+
+    default LevelRenderer getLevelRenderer()
+    {
+        return getEvent().getLevelRenderer();
+    }
+
+
+    default PoseStack getPoseStack()
+    {
+        return getEvent().getPoseStack();
+    }
+
+
+    default Matrix4f getProjectionMatrix()
+    {
+        return getEvent().getProjectionMatrix();
+    }
+
+
+    default int getRenderTick()
+    {
+        return getEvent().getRenderTick();
+    }
+
+
+    default float getPartialTick()
+    {
+        return getEvent().getPartialTick();
+    }
+
+
+    default Camera getCamera()
+    {
+        return getEvent().getCamera();
+    }
+
+
+    default Frustum getFrustum()
+    {
+        return getEvent().getFrustum();
+    }
+}

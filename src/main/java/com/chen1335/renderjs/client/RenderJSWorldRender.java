@@ -1,6 +1,6 @@
 package com.chen1335.renderjs.client;
 
-import com.chen1335.renderjs.Renderjs;
+import com.chen1335.renderjs.RenderJS;
 import com.chen1335.renderjs.client.renderer.ModRenderType;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.function.Consumer;
 
-@Mod.EventBusSubscriber(modid = Renderjs.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
+@Mod.EventBusSubscriber(modid = RenderJS.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class RenderJSWorldRender {
     public static ArrayList<Consumer<RenderContext>> RENDER_LIST = new ArrayList<>();
 
@@ -47,7 +47,7 @@ public class RenderJSWorldRender {
 
     @HideFromJS
     public static RenderJSWorldRender getInstance() {
-        return Renderjs.worldRenderInstance;
+        return RenderJS.worldRenderInstance;
     }
 
     @SubscribeEvent
@@ -56,7 +56,7 @@ public class RenderJSWorldRender {
             RenderSystem.disableDepthTest();
             Iterator<Consumer<RenderContext>> consumerIterator = RENDER_LIST.iterator();
             while (consumerIterator.hasNext()) {
-                if (Renderjs.CAN_RENDER) {
+                if (RenderJS.CAN_RENDER) {
                     consumerIterator.next().accept(RenderContext.getContext().update(event, getRenderBuffers().bufferSource()));
                 }
             }
