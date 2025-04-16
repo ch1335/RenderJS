@@ -41,13 +41,15 @@ public interface IGuiRenderHelper {
     }
 
     default void drawString(Component component, int x, int y, int r, int g, int b, int a) {
-        getGuiGraphics().drawString(Minecraft.getInstance().font, component, x, y, new Color(r, g, b, a).getRGB());
+        getGuiGraphics().drawString(Minecraft.getInstance().font, component, x, y, new Color(r, g, b, a).getRGB(), false);
+    }
 
+    default void drawString(Component component, int x, int y, int r, int g, int b, int a, boolean shadow) {
+        getGuiGraphics().drawString(Minecraft.getInstance().font, component, x, y, new Color(r, g, b, a).getRGB(), shadow);
     }
 
     default void drawString(Component component, int x, int y, int color) {
-        getGuiGraphics().drawString(Minecraft.getInstance().font, component, x, y, color);
-
+        getGuiGraphics().drawString(Minecraft.getInstance().font, component, x, y, color, false);
     }
 
     default void drawShadowString(Component component, int x, int y, int r, int g, int b, int a) {

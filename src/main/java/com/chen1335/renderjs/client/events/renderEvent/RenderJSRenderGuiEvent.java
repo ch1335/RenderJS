@@ -16,7 +16,7 @@ import net.minecraftforge.fml.common.Mod;
 
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = RenderJS.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class RenderJSRenderGuiEvent extends ClientEventJS implements IGuiRenderHelper, IGuiRenderEvent , IRenderJSPoseStackHelper {
+public class RenderJSRenderGuiEvent extends ClientEventJS implements IGuiRenderHelper, IGuiRenderEvent, IRenderJSPoseStackHelper {
 
     protected final RenderGuiEvent event;
 
