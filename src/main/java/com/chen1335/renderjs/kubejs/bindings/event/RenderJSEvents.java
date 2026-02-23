@@ -1,9 +1,7 @@
 package com.chen1335.renderjs.kubejs.bindings.event;
 
 import com.chen1335.renderjs.client.events.ItemDecorationsRegisterEvent;
-import com.chen1335.renderjs.client.events.renderEvent.RenderJSRenderGuiEvent;
-import com.chen1335.renderjs.client.events.renderEvent.RenderJSRenderLevelEvent;
-import com.chen1335.renderjs.client.events.renderEvent.RenderJSRenderScreenEvent;
+import com.chen1335.renderjs.client.events.renderEvent.*;
 import dev.latvian.mods.kubejs.event.EventGroup;
 import dev.latvian.mods.kubejs.event.EventHandler;
 
@@ -14,10 +12,12 @@ public interface RenderJSEvents {
         return ItemDecorationsRegisterEvent.class;
     });
 
+    EventHandler REGISTER_BLOCK_ENTITY_RENDER = GROUP.client("registerBlockEntityRender", () -> RegisterBlockEntityRenderEvent.class);
 
-    EventHandler LIVING_RENDER_PRE = GROUP.client("onLivingPreRender", () -> com.chen1335.renderjs.client.events.renderEvent.RenderJSRenderLivingEvent.class);
 
-    EventHandler LIVING_RENDER_Post = GROUP.client("onLivingPostRender", () -> com.chen1335.renderjs.client.events.renderEvent.RenderJSRenderLivingEvent.class);
+    EventHandler LIVING_RENDER_PRE = GROUP.client("onLivingPreRender", () -> RenderJSRenderLivingEvent.class);
+
+    EventHandler LIVING_RENDER_Post = GROUP.client("onLivingPostRender", () -> RenderJSRenderLivingEvent.class);
 
     EventHandler RENDER_GUI_PRE = GROUP.client("onGuiPreRender", () -> RenderJSRenderGuiEvent.class);
 

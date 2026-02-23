@@ -4,6 +4,7 @@ import com.chen1335.renderjs.client.ModItemDecorator.RenderJSItemDecorator;
 import com.chen1335.renderjs.client.ModItemDecorator.RenderJSItemDecoratorHandler;
 import dev.latvian.mods.kubejs.client.ClientKubeEvent;
 import dev.latvian.mods.kubejs.typings.Info;
+import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.Item;
 
 import java.util.function.Consumer;

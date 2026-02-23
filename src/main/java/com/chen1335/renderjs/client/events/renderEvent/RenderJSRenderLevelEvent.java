@@ -32,6 +32,7 @@ public class RenderJSRenderLevelEvent implements ClientKubeEvent, ILevelRenderEv
         }
 
         event.getPoseStack().pushPose();
+
         RenderJSRenderLevelEvent event1 = new RenderJSRenderLevelEvent(event);
         event1.getGuiGraphics().pose = event.getPoseStack();
         RenderJSEvents.RENDER_LEVEL.post(event1);

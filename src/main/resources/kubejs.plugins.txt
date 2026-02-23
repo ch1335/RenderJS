@@ -1,1 +1,2 @@
 com.chen1335.renderjs.kubejs.RenderJSPlugin client
+com.chen1335.renderjs.kubejs.RenderJSCommonPlugin

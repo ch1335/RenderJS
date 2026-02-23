@@ -28,26 +28,27 @@ import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
 
-public class RenderJSBlockEntityRenderer implements BlockEntityRenderer<BlockEntity> {
+public class RenderJSBlockEntityRenderer implements BlockEntityRenderer<BlockEntity>{
     public final BlockEntityRenderDispatcher blockEntityRenderDispatcher;
     public final BlockRenderDispatcher blockRenderDispatcher;
     public final ItemRenderer itemRenderer;
     public final EntityRenderDispatcher entityRenderer;
     public final EntityModelSet modelSet;
     public final Font font;
-    private AABB renderBoundingBox = null;
+    public AABB renderBoundingBox = null;
+
+
+    private int distance = 64;
+
+    public BiPredicate<BlockEntity, Vec3> shouldRenderPredicate = this::defaultShouldRender;
+    public BiConsumer<RenderJSBlockEntityRenderer, Context> customRender = (renderer, context) -> {
+    };
+
+    public Predicate<BlockEntity> shouldRenderOffScreen = blockEntity -> false;
 
     public static RenderJSBlockEntityRenderer create(BlockEntityRendererProvider.Context context) {
         return new RenderJSBlockEntityRenderer(context);
     }
-
-    private int distance = 64;
-
-    private BiPredicate<BlockEntity, Vec3> shouldRenderPredicate = this::defaultShouldRender;
-    private BiConsumer<RenderJSBlockEntityRenderer, Context> customRender = (renderer, context) -> {
-    };
-
-    private Predicate<BlockEntity> shouldRenderOffScreen = blockEntity -> false;
 
     public RenderJSBlockEntityRenderer(BlockEntityRendererProvider.Context context) {
         blockEntityRenderDispatcher = context.getBlockEntityRenderDispatcher();
@@ -120,6 +121,7 @@ public class RenderJSBlockEntityRenderer implements BlockEntityRenderer<BlockEnt
     public void setRenderBoundingBox(AABB renderBoundingBox) {
         this.renderBoundingBox = renderBoundingBox;
     }
+
 
     public static class Context implements ILevelRenderHelper, IGuiRenderHelper, IRenderJSPoseStackHelper {
         public static final Context context = new Context();

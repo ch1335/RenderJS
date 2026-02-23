@@ -16,8 +16,24 @@ tasks.named('wrapper', Wrapper).configure {
 version = mod_version
 group = mod_group_id
 
+repositories.clear()
 repositories {
-    mavenLocal()
+    maven {
+
+        url = "https://libraries.minecraft.net/"
+    }
+
+    maven {
+        url = "https://neoforged.forgecdn.net/releases"
+    }
+
+    maven {
+        url = "https://neoforged.forgecdn.net/mojang-meta"
+    }
+
+    maven {
+        url "https://cursemaven.com"
+    }
 }
 
 base {
@@ -113,6 +129,8 @@ configurations {
 
 dependencies {
     implementation fileTree(dir:'libs')
+    implementation "curse.maven:kubejs-238086:7278501"
+    implementation "curse.maven:rhino-416294:7104526"
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.
@@ -167,3 +185,6 @@ idea {
         downloadJavadoc = true
     }
 }
+
+compileJava.options.compilerArgs.add '-parameters'
+compileTestJava.options.compilerArgs.add '-parameters'

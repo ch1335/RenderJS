@@ -1,13 +1,16 @@
 package com.chen1335.renderjs.API;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.*;
 import dev.latvian.mods.kubejs.typings.Info;
 import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import org.joml.Matrix4f;
 
 import java.awt.*;
 
@@ -27,6 +30,18 @@ public interface IGuiRenderHelper {
 
     GuiGraphics getGuiGraphics();
 
+    @Info("Draw an image at a fixed size (Automatic stretching)")
+    default void drawTextureWithSize(ResourceLocation resourceLocation, int x, int y, int width, int height, int blitOffset) {
+        RenderSystem.setShaderTexture(0, resourceLocation);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        Matrix4f matrix4f = getGuiGraphics().pose.last().pose();
+        BufferBuilder bufferbuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        bufferbuilder.addVertex(matrix4f, (float) x, (float) y, (float) blitOffset).setUv(0, 0);
+        bufferbuilder.addVertex(matrix4f, (float) x, (float) y + height, (float) blitOffset).setUv(0, 1);
+        bufferbuilder.addVertex(matrix4f, (float) x + width, (float) y + height, (float) blitOffset).setUv(1, 1);
+        bufferbuilder.addVertex(matrix4f, (float) x + width, (float) y, (float) blitOffset).setUv(1, 0);
+        BufferUploader.drawWithShader(bufferbuilder.buildOrThrow());
+    }
 
     default void drawTexture(ResourceLocation resourceLocation, int x, int y, int textureWidth, int textureHeight, int uOffset, int vOffset, int uWidth, int vHeight, int blitOffset) {
         getGuiGraphics().blit(resourceLocation, x, y, blitOffset, uOffset, vOffset, uWidth, vHeight, textureWidth, textureHeight);
@@ -41,12 +56,12 @@ public interface IGuiRenderHelper {
     }
 
     default void drawString(Component component, int x, int y, int r, int g, int b, int a) {
-        getGuiGraphics().drawString(Minecraft.getInstance().font, component, x, y, new Color(r, g, b, a).getRGB());
+        getGuiGraphics().drawString(Minecraft.getInstance().font, component, x, y, new Color(r, g, b, a).getRGB(), false);
 
     }
 
     default void drawString(Component component, int x, int y, int color) {
-        getGuiGraphics().drawString(Minecraft.getInstance().font, component, x, y, color);
+        getGuiGraphics().drawString(Minecraft.getInstance().font, component, x, y, color, false);
 
     }
 

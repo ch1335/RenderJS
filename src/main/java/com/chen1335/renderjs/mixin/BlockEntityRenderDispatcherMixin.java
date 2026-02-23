@@ -16,6 +16,7 @@ public class BlockEntityRenderDispatcherMixin {
     @Shadow
     private Map<BlockEntityType<?>, BlockEntityRenderer<?>> renderers;
 
+    @Deprecated
     @Unique
     public  BlockEntityRenderer<?> rjs$getRendererByType(BlockEntityType<BlockEntity> blockEntityType){
         return renderers.get(blockEntityType);

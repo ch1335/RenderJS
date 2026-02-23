@@ -16,7 +16,8 @@ import net.neoforged.neoforge.client.event.RenderGuiEvent;
 
 
 @EventBusSubscriber(value = Dist.CLIENT, modid = RenderJS.MODID, bus = EventBusSubscriber.Bus.GAME)
-public class RenderJSRenderGuiEvent implements ClientKubeEvent, IGuiRenderHelper, IGuiRenderEvent , IRenderJSPoseStackHelper {
+public class RenderJSRenderGuiEvent implements ClientKubeEvent, IGuiRenderHelper, IGuiRenderEvent, IRenderJSPoseStackHelper {
+    public static boolean SUSPENDED = false;
 
     protected final RenderGuiEvent event;
 
@@ -27,23 +28,37 @@ public class RenderJSRenderGuiEvent implements ClientKubeEvent, IGuiRenderHelper
     @SubscribeEvent
     @HideFromJS
     public static void RenderGuiEvent$Pre(RenderGuiEvent.Pre event) {
-        if (!RenderJS.CAN_RENDER) {
+        if (!RenderJS.CAN_RENDER || SUSPENDED) {
             return;
         }
-        event.getGuiGraphics().pose().pushPose();
-        RenderJSEvents.RENDER_GUI_PRE.post(new RenderJSRenderGuiEvent(event));
-        event.getGuiGraphics().pose().popPose();
+
+        try {
+            event.getGuiGraphics().pose().pushPose();
+            RenderJSEvents.RENDER_GUI_PRE.post(new RenderJSRenderGuiEvent(event));
+            event.getGuiGraphics().pose().popPose();
+        } catch (RuntimeException e) {
+            RenderJS.LOGGER.error("An exception was found during rendering, and rendering has been automatically stopped until the next reload", e);
+            SUSPENDED = true;
+        }
     }
 
     @SubscribeEvent
     @HideFromJS
     public static void RenderGuiEvent$Post(RenderGuiEvent.Post event) {
-        if (!RenderJS.CAN_RENDER) {
+        if (!RenderJS.CAN_RENDER || SUSPENDED) {
             return;
         }
-        event.getGuiGraphics().pose().pushPose();
-        RenderJSEvents.RENDER_GUI_POST.post(new RenderJSRenderGuiEvent(event));
-        event.getGuiGraphics().pose().popPose();
+
+        try {
+            event.getGuiGraphics().pose().pushPose();
+            RenderJSEvents.RENDER_GUI_POST.post(new RenderJSRenderGuiEvent(event));
+            event.getGuiGraphics().pose().popPose();
+        } catch (RuntimeException e) {
+            RenderJS.LOGGER.error("An exception was found during rendering, and rendering has been automatically stopped until the next reload", e);
+            SUSPENDED = true;
+        }
+
+
     }
 
 
