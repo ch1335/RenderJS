@@ -3,9 +3,9 @@ package com.chen1335.renderjs.client.ModItemDecorator;
 import com.chen1335.renderjs.API.IGuiRenderHelper;
 import com.chen1335.renderjs.API.IRenderJSPoseStackHelper;
 import com.chen1335.renderjs.RenderJS;
+import com.chen1335.renderjs.client.renderer.RenderJSPoseStackUtil;
 import dev.latvian.mods.kubejs.typings.Info;
 import dev.latvian.mods.kubejs.typings.Param;
-import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.item.ItemStack;
@@ -28,14 +28,19 @@ public class RenderJSItemDecorator implements IItemDecorator {
         }
     }
 
-    @HideFromJS
     @Override
     public boolean render(@NotNull GuiGraphicsExtractor guiGraphics, @NotNull Font font, @NotNull ItemStack stack, int xOffset, int yOffset) {
         if (RenderJS.CAN_RENDER) {
-            guiGraphics.pose().pushMatrix();
-            RenderContext context = RenderContext.getContext().update(guiGraphics, font, stack, xOffset, yOffset);
+            RenderContext context = RenderContext.getContext().update(
+                    guiGraphics,
+                    RenderJSPoseStackUtil.copy(guiGraphics.pose()),
+                    font,
+                    stack,
+                    xOffset,
+                    yOffset
+            );
             consumers.forEach(consumer -> consumer.accept(context));
-            guiGraphics.pose().popMatrix();
+            RenderJSPoseStackUtil.checkBalanced("itemDecoration", context.getPoseStack(), 0);
         }
         return true;
     }
@@ -53,7 +58,7 @@ public class RenderJSItemDecorator implements IItemDecorator {
 
     @Info("Render context passed to item decoration callbacks. Provides the item stack, the icon offset and 2D drawing helpers.")
     public static class RenderContext implements IGuiRenderHelper, IRenderJSPoseStackHelper {
-        private static final RenderContext context = new RenderContext(null, null, null, 0, 0);
+        private static final RenderContext context = new RenderContext(null, null, null, null, 0, 0);
 
         @Info("Font used to draw text on the item icon.")
         public Font font;
@@ -65,27 +70,29 @@ public class RenderJSItemDecorator implements IItemDecorator {
         public int yOffset;
         @Info("GUI graphics extractor of the current frame.")
         public GuiGraphicsExtractor guiGraphics;
+        @Info("Private copy of the GUI matrix stack used by the decoration callback.")
+        public Matrix3x2fStack poseStack;
 
-        public RenderContext(GuiGraphicsExtractor guiGraphics, Font font, ItemStack itemStack, int xOffset, int yOffset) {
+        public RenderContext(GuiGraphicsExtractor guiGraphics, Matrix3x2fStack poseStack, Font font, ItemStack itemStack, int xOffset, int yOffset) {
+            this.guiGraphics = guiGraphics;
+            this.poseStack = poseStack;
             this.font = font;
             this.itemStack = itemStack;
             this.xOffset = xOffset;
             this.yOffset = yOffset;
-            this.guiGraphics = guiGraphics;
         }
 
-        @HideFromJS
         public static RenderContext getContext() {
             return context;
         }
 
-        @HideFromJS
-        public RenderContext update(GuiGraphicsExtractor guiGraphics, Font font, ItemStack itemStack, int xOffset, int yOffset) {
+        public RenderContext update(GuiGraphicsExtractor guiGraphics, Matrix3x2fStack poseStack, Font font, ItemStack itemStack, int xOffset, int yOffset) {
+            this.guiGraphics = guiGraphics;
+            this.poseStack = poseStack;
             this.font = font;
             this.itemStack = itemStack;
             this.xOffset = xOffset;
             this.yOffset = yOffset;
-            this.guiGraphics = guiGraphics;
             return this;
         }
 
@@ -96,7 +103,7 @@ public class RenderJSItemDecorator implements IItemDecorator {
 
         @Override
         public Matrix3x2fStack getPoseStack() {
-            return guiGraphics.pose();
+            return poseStack;
         }
     }
 }

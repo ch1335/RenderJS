@@ -5,7 +5,6 @@ import com.chen1335.renderjs.RenderJSClient;
 import com.chen1335.renderjs.client.events.ItemDecorationsRegisterEvent;
 import com.chen1335.renderjs.kubejs.bindings.event.RenderJSEvents;
 import dev.latvian.mods.kubejs.typings.Info;
-import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.world.item.Item;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -18,16 +17,13 @@ import java.util.function.Consumer;
 @Info("Internal item decoration manager. Scripts should use the registerItemDecorations event instead.")
 @EventBusSubscriber(modid = RenderJS.MODID, value = Dist.CLIENT)
 public class RenderJSItemDecoratorHandler {
-    @HideFromJS
     private static final HashMap<Item, RenderJSItemDecorator> registeredItemDecorators = new HashMap<>();
-    @HideFromJS
     public final RenderJSItemDecorator registeredGlobalItemDecorator;
 
     public RenderJSItemDecoratorHandler() {
         registeredGlobalItemDecorator = new RenderJSItemDecorator(null);
     }
 
-    @HideFromJS
     public static RenderJSItemDecoratorHandler getInstance() {
         return RenderJSClient.ITEM_DECORATOR_HANDLER;
     }
@@ -38,7 +34,6 @@ public class RenderJSItemDecoratorHandler {
         registeredItemDecorators.values().forEach(RenderJSItemDecorator::clear);
     }
 
-    @HideFromJS
     @SubscribeEvent
     public static void RegisterItemDecorationsEvent(RegisterItemDecorationsEvent event) {
         RenderJSItemDecoratorHandler.clearRender();
@@ -46,7 +41,6 @@ public class RenderJSItemDecoratorHandler {
         registeredItemDecorators.forEach(event::register);
     }
 
-    @HideFromJS
     public void register(Item item, Consumer<RenderJSItemDecorator.RenderContext> consumer) {
         if (registeredItemDecorators.containsKey(item)) {
             registeredItemDecorators.get(item).addRender(consumer);
@@ -55,7 +49,6 @@ public class RenderJSItemDecoratorHandler {
         registeredItemDecorators.put(item, new RenderJSItemDecorator(consumer));
     }
 
-    @HideFromJS
     public void registerForAllItem(Consumer<RenderJSItemDecorator.RenderContext> consumer) {
         registeredGlobalItemDecorator.addRender(consumer);
     }

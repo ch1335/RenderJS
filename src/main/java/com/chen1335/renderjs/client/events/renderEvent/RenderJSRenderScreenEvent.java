@@ -4,11 +4,12 @@ import com.chen1335.renderjs.API.IGuiRenderHelper;
 import com.chen1335.renderjs.API.IRenderJSPoseStackHelper;
 import com.chen1335.renderjs.API.IScreenRenderEvent;
 import com.chen1335.renderjs.RenderJS;
+import com.chen1335.renderjs.client.renderer.RenderJSPoseStackUtil;
 import com.chen1335.renderjs.kubejs.bindings.event.RenderJSEvents;
 import dev.latvian.mods.kubejs.client.ClientKubeEvent;
 import dev.latvian.mods.kubejs.typings.Info;
-import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.screens.Screen;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -20,42 +21,85 @@ import org.joml.Matrix3x2fStack;
 @EventBusSubscriber(value = Dist.CLIENT, modid = RenderJS.MODID)
 public class RenderJSRenderScreenEvent implements ClientKubeEvent, IGuiRenderHelper, IScreenRenderEvent, IRenderJSPoseStackHelper {
 
-    protected final ScreenEvent.Render event;
+    protected final GuiGraphicsExtractor guiGraphics;
+    protected final Matrix3x2fStack poseStack;
+    protected final int mouseX;
+    protected final int mouseY;
+    protected final float partialTick;
+    protected final Screen screen;
 
-    public RenderJSRenderScreenEvent(ScreenEvent.Render event) {
-        this.event = event;
+    public RenderJSRenderScreenEvent(GuiGraphicsExtractor guiGraphics, Matrix3x2fStack poseStack, int mouseX, int mouseY, float partialTick, Screen screen) {
+        this.guiGraphics = guiGraphics;
+        this.poseStack = poseStack;
+        this.mouseX = mouseX;
+        this.mouseY = mouseY;
+        this.partialTick = partialTick;
+        this.screen = screen;
     }
 
     @SubscribeEvent
-    @HideFromJS
     public static void RenderGuiEvent$Pre(ScreenEvent.Render.Pre event) {
         if (!RenderJS.CAN_RENDER) {
             return;
         }
-        RenderJSEvents.RENDER_SCREEN_PRE.post(new RenderJSRenderScreenEvent(event));
+        RenderJSRenderScreenEvent kubeEvent = fromEvent(event);
+        RenderJSEvents.RENDER_SCREEN_PRE.post(kubeEvent);
+        RenderJSPoseStackUtil.checkBalanced("onScreenPreRender", kubeEvent.getPoseStack(), 0);
     }
 
     @SubscribeEvent
-    @HideFromJS
     public static void RenderGuiEvent$Post(ScreenEvent.Render.Post event) {
         if (!RenderJS.CAN_RENDER) {
             return;
         }
-        RenderJSEvents.RENDER_SCREEN_POST.post(new RenderJSRenderScreenEvent(event));
+        RenderJSRenderScreenEvent kubeEvent = fromEvent(event);
+        RenderJSEvents.RENDER_SCREEN_POST.post(kubeEvent);
+        RenderJSPoseStackUtil.checkBalanced("onScreenPostRender", kubeEvent.getPoseStack(), 0);
     }
 
-    @Override
-    public ScreenEvent.Render getEvent() {
-        return event;
+    private static RenderJSRenderScreenEvent fromEvent(ScreenEvent.Render event) {
+        GuiGraphicsExtractor guiGraphics = event.getGuiGraphics();
+        return new RenderJSRenderScreenEvent(
+                guiGraphics,
+                RenderJSPoseStackUtil.copy(guiGraphics.pose()),
+                event.getMouseX(),
+                event.getMouseY(),
+                event.getPartialTick(),
+                event.getScreen()
+        );
     }
 
     @Override
     public GuiGraphicsExtractor getGuiGraphics() {
-        return event.getGuiGraphics();
+        return guiGraphics;
     }
 
     @Override
     public Matrix3x2fStack getPoseStack() {
-        return event.getGuiGraphics().pose();
+        return poseStack;
+    }
+
+    @Override
+    @Info("Returns the horizontal position of the mouse, in GUI pixels.")
+    public int getMouseX() {
+        return mouseX;
+    }
+
+    @Override
+    @Info("Returns the vertical position of the mouse, in GUI pixels.")
+    public int getMouseY() {
+        return mouseY;
+    }
+
+    @Override
+    @Info("Returns the partial tick of the current frame.")
+    public float getPartialTick() {
+        return partialTick;
+    }
+
+    @Override
+    @Info("Returns the screen currently being rendered.")
+    public Screen getScreen() {
+        return screen;
     }
 }

@@ -4,12 +4,13 @@ import com.chen1335.renderjs.API.ILevelPoseHelper;
 import com.chen1335.renderjs.API.ILevelRenderEvent;
 import com.chen1335.renderjs.API.ILevelRenderHelper;
 import com.chen1335.renderjs.RenderJS;
+import com.chen1335.renderjs.client.renderer.RenderJSPoseStackUtil;
 import com.chen1335.renderjs.kubejs.bindings.event.RenderJSEvents;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.latvian.mods.kubejs.client.ClientKubeEvent;
 import dev.latvian.mods.kubejs.typings.Info;
-import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.state.level.LevelRenderState;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -22,40 +23,42 @@ import net.neoforged.neoforge.client.event.SubmitCustomGeometryEvent;
 @Info("World render event context. Geometry submitted here is queued for the current frame's custom geometry pass.")
 @EventBusSubscriber(value = Dist.CLIENT, modid = RenderJS.MODID)
 public class RenderJSRenderLevelEvent implements ClientKubeEvent, ILevelRenderEvent, ILevelRenderHelper, ILevelPoseHelper {
-    private final SubmitCustomGeometryEvent event;
+    private final PoseStack poseStack;
+    private final SubmitNodeCollector submitNodeCollector;
+    private final LevelRenderState levelRenderState;
 
-    public RenderJSRenderLevelEvent(SubmitCustomGeometryEvent event) {
-        this.event = event;
+    public RenderJSRenderLevelEvent(PoseStack poseStack, SubmitNodeCollector submitNodeCollector, LevelRenderState levelRenderState) {
+        this.poseStack = poseStack;
+        this.submitNodeCollector = submitNodeCollector;
+        this.levelRenderState = levelRenderState;
     }
 
     @SubscribeEvent
-    @HideFromJS
     public static void RenderLevelEvent(SubmitCustomGeometryEvent event) {
         if (!RenderJS.CAN_RENDER) {
             return;
         }
 
-        event.getPoseStack().pushPose();
+        PoseStack poseStack = RenderJSPoseStackUtil.copy(event.getPoseStack());
+        int depth = RenderJSPoseStackUtil.depth(poseStack);
 
-        RenderJSRenderLevelEvent event1 = new RenderJSRenderLevelEvent(event);
-        RenderJSEvents.RENDER_LEVEL.post(event1);
+        RenderJSEvents.RENDER_LEVEL.post(new RenderJSRenderLevelEvent(poseStack, event.getSubmitNodeCollector(), event.getLevelRenderState()));
 
-        event.getPoseStack().popPose();
-    }
-
-    @Override
-    @HideFromJS
-    public SubmitCustomGeometryEvent getEvent() {
-        return event;
+        RenderJSPoseStackUtil.checkBalanced("onLevelRender", poseStack, depth);
     }
 
     @Override
     public PoseStack getPoseStack() {
-        return event.getPoseStack();
+        return poseStack;
     }
 
     @Override
     public SubmitNodeCollector getSubmitNodeCollector() {
-        return event.getSubmitNodeCollector();
+        return submitNodeCollector;
+    }
+
+    @Override
+    public LevelRenderState getLevelRenderState() {
+        return levelRenderState;
     }
 }

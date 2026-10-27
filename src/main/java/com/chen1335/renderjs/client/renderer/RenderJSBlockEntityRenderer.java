@@ -2,12 +2,12 @@ package com.chen1335.renderjs.client.renderer;
 
 import com.chen1335.renderjs.API.ILevelPoseHelper;
 import com.chen1335.renderjs.API.ILevelRenderHelper;
+import com.chen1335.renderjs.RenderJS;
 import com.chen1335.renderjs.client.renderer.state.RenderJSBlockEntityRenderState;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.latvian.mods.kubejs.block.entity.KubeBlockEntity;
 import dev.latvian.mods.kubejs.typings.Info;
 import dev.latvian.mods.kubejs.typings.Param;
-import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.model.geom.EntityModelSet;
@@ -79,13 +79,11 @@ public class RenderJSBlockEntityRenderer implements BlockEntityRenderer<BlockEnt
         this.playerSkinRenderCache = context.playerSkinRenderCache();
     }
 
-    @HideFromJS
     @Override
     public RenderJSBlockEntityRenderState createRenderState() {
         return new RenderJSBlockEntityRenderState();
     }
 
-    @HideFromJS
     @Override
     public void extractRenderState(BlockEntity blockEntity, RenderJSBlockEntityRenderState state, float partialTick, Vec3 cameraPosition, ModelFeatureRenderer.CrumblingOverlay breakProgress) {
         BlockEntityRenderState.extractBase(blockEntity, state, breakProgress);
@@ -95,10 +93,15 @@ public class RenderJSBlockEntityRenderer implements BlockEntityRenderer<BlockEnt
         state.cameraPosition = cameraPosition;
     }
 
-    @HideFromJS
     @Override
     public void submit(RenderJSBlockEntityRenderState state, @NotNull PoseStack poseStack, @NotNull SubmitNodeCollector submitNodeCollector, @NotNull CameraRenderState camera) {
-        customRender.accept(this, Context.context.update(this, state, poseStack, submitNodeCollector, camera));
+        if (!RenderJS.CAN_RENDER) {
+            return;
+        }
+        Context renderContext = Context.context.update(this, state, poseStack, submitNodeCollector, camera);
+        int depth = RenderJSPoseStackUtil.depth(renderContext.getPoseStack());
+        customRender.accept(this, renderContext);
+        RenderJSPoseStackUtil.checkBalanced("blockEntityRender", renderContext.getPoseStack(), depth);
     }
 
     @Override
@@ -203,13 +206,12 @@ public class RenderJSBlockEntityRenderer implements BlockEntityRenderer<BlockEnt
         @Info("Packed overlay texture coordinates.")
         public int packedOverlay;
 
-        @HideFromJS
         public Context update(RenderJSBlockEntityRenderer renderer, RenderJSBlockEntityRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState camera) {
             this.renderer = renderer;
             this.blockEntity = state.blockEntity;
             this.blockEntityJS = state.blockEntityJS;
             this.partialTick = state.partialTick;
-            this.poseStack = poseStack;
+            this.poseStack = RenderJSPoseStackUtil.copy(poseStack);
             this.submitNodeCollector = submitNodeCollector;
             this.camera = camera;
             this.packedLight = state.lightCoords;

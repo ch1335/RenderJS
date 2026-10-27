@@ -4,7 +4,6 @@ import com.chen1335.renderjs.client.renderer.RenderJSBlockRender;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.latvian.mods.kubejs.typings.Info;
 import dev.latvian.mods.kubejs.typings.Param;
-import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -30,7 +29,6 @@ import org.jetbrains.annotations.Nullable;
 public interface ILevelRenderHelper {
     PoseStack getPoseStack();
 
-    @HideFromJS
     SubmitNodeCollector getSubmitNodeCollector();
 
     @Info(value = "Translates the pose stack into camera relative space.",

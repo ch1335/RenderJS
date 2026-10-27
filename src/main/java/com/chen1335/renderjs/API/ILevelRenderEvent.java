@@ -3,31 +3,19 @@ package com.chen1335.renderjs.API;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.latvian.mods.kubejs.typings.Info;
 import dev.latvian.mods.kubejs.typings.Param;
-import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.state.level.LevelRenderState;
-import net.neoforged.neoforge.client.event.SubmitCustomGeometryEvent;
 
 @Info("World render event context. Geometry submitted here is queued for the current frame's custom geometry pass.")
 public interface ILevelRenderEvent extends IRenderJSEvent {
-    @HideFromJS
-    SubmitCustomGeometryEvent getEvent();
+    PoseStack getPoseStack();
 
-    default PoseStack getPoseStack() {
-        return getEvent().getPoseStack();
-    }
+    SubmitNodeCollector getSubmitNodeCollector();
 
-    @HideFromJS
-    default SubmitNodeCollector getSubmitNodeCollector() {
-        return getEvent().getSubmitNodeCollector();
-    }
-
-    @HideFromJS
-    default LevelRenderState getLevelRenderState() {
-        return getEvent().getLevelRenderState();
-    }
+    LevelRenderState getLevelRenderState();
 
     @Info("Returns the client level renderer.")
     default LevelRenderer getLevelRenderer() {
@@ -44,14 +32,13 @@ public interface ILevelRenderEvent extends IRenderJSEvent {
         return Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(true);
     }
 
-    @HideFromJS
-    default net.minecraft.client.renderer.state.level.CameraRenderState getCamera() {
-        return getEvent().getLevelRenderState().cameraRenderState;
+    default CameraRenderState getCamera() {
+        return getLevelRenderState().cameraRenderState;
     }
 
     @Info("Returns the camera position in world space.")
     default net.minecraft.world.phys.Vec3 getCameraPosition() {
-        return getEvent().getLevelRenderState().cameraRenderState.pos;
+        return getCamera().pos;
     }
 
     @Info(value = "Translates the pose stack into camera relative world space.",

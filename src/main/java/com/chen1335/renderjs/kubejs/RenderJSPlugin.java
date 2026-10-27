@@ -1,9 +1,9 @@
 package com.chen1335.renderjs.kubejs;
 
+import com.chen1335.renderjs.RenderJS;
 import com.chen1335.renderjs.client.ModItemDecorator.RenderJSItemDecoratorHandler;
 import com.chen1335.renderjs.client.events.ItemDecorationsRegisterEvent;
 import com.chen1335.renderjs.client.events.renderEvent.RegisterBlockEntityRenderEvent;
-import com.chen1335.renderjs.client.events.renderEvent.RenderJSRenderGuiEvent;
 import com.chen1335.renderjs.client.renderer.RenderJSBlockEntityRenderer;
 import com.chen1335.renderjs.client.renderer.RenderJSRenderType;
 import com.chen1335.renderjs.kubejs.bindings.RenderJSLevelRenderStage;
@@ -65,7 +65,7 @@ public class RenderJSPlugin implements KubeJSPlugin {
         RenderJSEvents.REGISTER_ITEM_DECORATIONS.post(new ItemDecorationsRegisterEvent());
         RenderJSEvents.REGISTER_BLOCK_ENTITY_RENDER.post(new RegisterBlockEntityRenderEvent(null));
 
-        RenderJSRenderGuiEvent.SUSPENDED = false;
+        RenderJS.CAN_RENDER = true;
     }
 
     @Override

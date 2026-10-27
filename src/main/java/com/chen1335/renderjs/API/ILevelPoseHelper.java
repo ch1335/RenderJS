@@ -3,7 +3,6 @@ package com.chen1335.renderjs.API;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.latvian.mods.kubejs.typings.Info;
 import dev.latvian.mods.kubejs.typings.Param;
-import dev.latvian.mods.rhino.util.HideFromJS;
 import org.joml.Quaternionf;
 
 /**

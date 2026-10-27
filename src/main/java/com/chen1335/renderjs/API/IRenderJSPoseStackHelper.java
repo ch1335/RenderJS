@@ -2,7 +2,6 @@ package com.chen1335.renderjs.API;
 
 import dev.latvian.mods.kubejs.typings.Info;
 import dev.latvian.mods.kubejs.typings.Param;
-import dev.latvian.mods.rhino.util.HideFromJS;
 import org.joml.Matrix3x2fStack;
 
 /**

@@ -2,26 +2,46 @@ package com.chen1335.renderjs.API;
 
 import dev.latvian.mods.kubejs.typings.Info;
 import dev.latvian.mods.kubejs.typings.Param;
-import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
+import org.joml.Matrix3x2fStack;
 
 import java.awt.Color;
+import java.util.function.Consumer;
 
 /**
  * GUI drawing helper built on the 26.1.2 {@link GuiGraphicsExtractor} render state extractor.
  * <p>
  * Colors are {@code long} on purpose: KubeJS script literals such as {@code 0xFF00FF00} are
  * double values above {@code Integer.MAX_VALUE} and would otherwise fail Rhino's int conversion.
+ * <p>
+ * Scripts draw with a private copy of the GUI matrix stack, so every drawing call temporarily applies
+ * that copy to the extractor before submitting geometry and restores the extractor afterwards.
  */
 @Info("Drawing helpers for HUD and Screen rendering. Only usable from a GUI render event callback.")
 public interface IGuiRenderHelper {
-    @HideFromJS
     GuiGraphicsExtractor getGuiGraphics();
+
+    Matrix3x2fStack getPoseStack();
+
+    /**
+     * Runs the given drawing action on the extractor with the script controlled matrix applied.
+     */
+    default void withPose(Consumer<GuiGraphicsExtractor> action) {
+        GuiGraphicsExtractor guiGraphics = getGuiGraphics();
+        Matrix3x2fStack enginePose = guiGraphics.pose();
+        enginePose.pushMatrix();
+        enginePose.set(getPoseStack());
+        try {
+            action.accept(guiGraphics);
+        } finally {
+            enginePose.popMatrix();
+        }
+    }
 
     @Info(value = "Draws a texture stretched to the specified size.",
             params = {
@@ -33,7 +53,7 @@ public interface IGuiRenderHelper {
                     @Param(name = "blitOffset", value = "Legacy depth offset. Ignored in 26.1.2 and kept for compatibility.")
             })
     default void drawTextureWithSize(Identifier texture, int x, int y, int width, int height, int blitOffset) {
-        getGuiGraphics().blit(texture, x, y, x + width, y + height, 0.0F, 1.0F, 0.0F, 1.0F);
+        withPose(guiGraphics -> guiGraphics.blit(texture, x, y, x + width, y + height, 0.0F, 1.0F, 0.0F, 1.0F));
     }
 
     @Info(value = "Draws a texture stretched to the specified size.",
@@ -62,7 +82,7 @@ public interface IGuiRenderHelper {
                     @Param(name = "blitOffset", value = "Legacy depth offset. Ignored in 26.1.2 and kept for compatibility.")
             })
     default void drawTexture(Identifier texture, int x, int y, int textureWidth, int textureHeight, int uOffset, int vOffset, int uWidth, int vHeight, int blitOffset) {
-        getGuiGraphics().blit(RenderPipelines.GUI_TEXTURED, texture, x, y, uOffset, vOffset, uWidth, vHeight, uWidth, vHeight, textureWidth, textureHeight);
+        withPose(guiGraphics -> guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, x, y, uOffset, vOffset, uWidth, vHeight, uWidth, vHeight, textureWidth, textureHeight));
     }
 
     @Info(value = "Draws a sub-region of a texture.",
@@ -104,7 +124,8 @@ public interface IGuiRenderHelper {
                     @Param(name = "a", value = "Alpha channel, 0 to 255.")
             })
     default void drawString(Component component, int x, int y, int r, int g, int b, int a) {
-        getGuiGraphics().text(Minecraft.getInstance().font, component, x, y, new Color(r, g, b, a).getRGB(), false);
+        int color = new Color(r, g, b, a).getRGB();
+        withPose(guiGraphics -> guiGraphics.text(Minecraft.getInstance().font, component, x, y, color, false));
     }
 
     @Info(value = "Draws text without a drop shadow.",
@@ -115,7 +136,7 @@ public interface IGuiRenderHelper {
                     @Param(name = "color", value = "ARGB color in 0xAARRGGBB format.")
             })
     default void drawString(Component component, int x, int y, long color) {
-        getGuiGraphics().text(Minecraft.getInstance().font, component, x, y, (int) color, false);
+        withPose(guiGraphics -> guiGraphics.text(Minecraft.getInstance().font, component, x, y, (int) color, false));
     }
 
     @Info(value = "Draws text with a drop shadow, with an explicit RGBA color.",
@@ -129,7 +150,8 @@ public interface IGuiRenderHelper {
                     @Param(name = "a", value = "Alpha channel, 0 to 255.")
             })
     default void drawShadowString(Component component, int x, int y, int r, int g, int b, int a) {
-        getGuiGraphics().text(Minecraft.getInstance().font, component, x, y, new Color(r, g, b, a).getRGB(), true);
+        int color = new Color(r, g, b, a).getRGB();
+        withPose(guiGraphics -> guiGraphics.text(Minecraft.getInstance().font, component, x, y, color, true));
     }
 
     @Info(value = "Draws text with a drop shadow.",
@@ -140,7 +162,7 @@ public interface IGuiRenderHelper {
                     @Param(name = "color", value = "ARGB color in 0xAARRGGBB format.")
             })
     default void drawShadowString(Component component, int x, int y, long color) {
-        getGuiGraphics().text(Minecraft.getInstance().font, component, x, y, (int) color, true);
+        withPose(guiGraphics -> guiGraphics.text(Minecraft.getInstance().font, component, x, y, (int) color, true));
     }
 
     @Info(value = "Draws an item stack icon at the specified position.",
@@ -150,7 +172,7 @@ public interface IGuiRenderHelper {
                     @Param(name = "y", value = "Top edge of the icon, in GUI pixels.")
             })
     default void renderGuiItem(ItemStack itemStack, int x, int y) {
-        getGuiGraphics().item(itemStack, x, y);
+        withPose(guiGraphics -> guiGraphics.item(itemStack, x, y));
     }
 
     @Info(value = "Draws a horizontal line.",
@@ -161,12 +183,10 @@ public interface IGuiRenderHelper {
                     @Param(name = "color", value = "ARGB color in 0xAARRGGBB format.")
             })
     default void hLine(int minX, int maxX, int y, long color) {
-        if (maxX < minX) {
-            int i = minX;
-            minX = maxX;
-            maxX = i;
-        }
-        getGuiGraphics().fill(minX, y, maxX + 1, y + 1, (int) color);
+        int fromX = Math.min(minX, maxX);
+        int toX = Math.max(minX, maxX);
+        int lineY = y;
+        withPose(guiGraphics -> guiGraphics.fill(fromX, lineY, toX + 1, lineY + 1, (int) color));
     }
 
     @Info(value = "Draws a horizontal line, with an explicit RGBA color.",
@@ -196,7 +216,10 @@ public interface IGuiRenderHelper {
             minY = maxY;
             maxY = i;
         }
-        getGuiGraphics().fill(x, minY + 1, x + 1, maxY, (int) color);
+        int lineX = x;
+        int fromY = minY;
+        int toY = maxY;
+        withPose(guiGraphics -> guiGraphics.fill(lineX, fromY + 1, lineX + 1, toY, (int) color));
     }
 
     @Info(value = "Draws a vertical line, with an explicit RGBA color.",
@@ -222,7 +245,7 @@ public interface IGuiRenderHelper {
                     @Param(name = "color", value = "ARGB color in 0xAARRGGBB format.")
             })
     default void fill(int minX, int minY, int maxX, int maxY, long color) {
-        getGuiGraphics().fill(minX, minY, maxX, maxY, (int) color);
+        withPose(guiGraphics -> guiGraphics.fill(minX, minY, maxX, maxY, (int) color));
     }
 
     @Info(value = "Draws a filled rectangle, with an explicit RGBA color.",
