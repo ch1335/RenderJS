@@ -6,6 +6,7 @@ import com.chen1335.renderjs.API.IScreenRenderEvent;
 import com.chen1335.renderjs.RenderJS;
 import com.chen1335.renderjs.kubejs.bindings.event.RenderJSEvents;
 import dev.latvian.mods.kubejs.client.ClientKubeEvent;
+import dev.latvian.mods.kubejs.typings.Info;
 import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.neoforged.api.distmarker.Dist;
@@ -15,6 +16,7 @@ import net.neoforged.neoforge.client.event.ScreenEvent;
 import org.joml.Matrix3x2fStack;
 
 
+@Info("Screen render event context. Fires before and after a screen is rendered.")
 @EventBusSubscriber(value = Dist.CLIENT, modid = RenderJS.MODID)
 public class RenderJSRenderScreenEvent implements ClientKubeEvent, IGuiRenderHelper, IScreenRenderEvent, IRenderJSPoseStackHelper {
 

@@ -28,12 +28,19 @@ RenderJSEvents.onLevelRender(event => {
   // 普通方块：会被地形遮挡
   event.renderSingleBlock(state, poseStack)
 
-  // 穿过地形：使用无深度的 RenderType，永远画在最上层
-  event.renderSingleBlock(state, poseStack, RenderJSRenderType.TOP_LAYER_TARGET)
+  // 整体染色：乘到模型所有顶点（包括无 tint 的方块）
+  event.renderSingleBlock(state, poseStack, 0xFFFF0000)
 
-  // 描边（普通 / 穿过地形）
+  // 穿过地形：使用无深度的 RenderType，永远画在最上层
+  event.renderSingleBlockWithType(state, poseStack, RenderJSRenderType.TOP_LAYER_TARGET)
+
+  // 染色 + 穿过地形
+  event.renderSingleBlock(state, poseStack, 0x80FF0000, RenderJSRenderType.TOP_LAYER_TARGET)
+
+  // 描边（普通 / 穿过地形 / 指定颜色）
   event.renderHitOutline(state, poseStack)
-  event.renderHitOutline(state, poseStack, RenderJSRenderType.TOP_LAYER_LINE_TARGET)
+  event.renderHitOutlineWithType(state, poseStack, RenderJSRenderType.TOP_LAYER_LINE_TARGET)
+  event.renderHitOutline(state, poseStack, 0xFFFF0000)
 
   event.popPose()
 })

@@ -1,8 +1,12 @@
 package com.chen1335.renderjs.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.QuadInstance;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.BlockModelRenderState;
 import net.minecraft.client.renderer.block.BlockModelResolver;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
@@ -12,7 +16,11 @@ import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.util.ARGB;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -104,6 +112,64 @@ public class RenderJSBlockRender {
         collector.submitBlockModel(poseStack, renderType, parts, tints, packedLight, packedOverlay, 0);
     }
 
+    /**
+     * Renders a block model tinted by a single ARGB color. Unlike {@code tintLayers} (which only affects
+     * quads that declare a tint index) this multiplies the color into every quad, giving a real whole-model
+     * tint. Special models (chest/banner/...) have no plain model parts and fall back to the normal path.
+     */
+    public static void renderSingleBlockWithColor(BlockState blockState, PoseStack poseStack, SubmitNodeCollector collector, RenderType renderType, int argbColor, int packedLight, int packedOverlay) {
+        if (collector == null) {
+            return;
+        }
+        BlockModel model = getBlockModel(blockState);
+        if (model == null) {
+            renderSingleBlock(blockState, poseStack, collector, packedLight, packedOverlay);
+            return;
+        }
+
+        CapturingBlockModelRenderState captured = new CapturingBlockModelRenderState();
+        model.update(captured, blockState, BlockDisplayContext.create(), 42L);
+        List<BlockStateModelPart> parts = captured.capturedParts;
+        if (parts == null || parts.isEmpty()) {
+            renderSingleBlock(blockState, poseStack, collector, packedLight, packedOverlay);
+            return;
+        }
+
+        int[] tintLayers = captured.tintLayers().toArray(BlockModelRenderState.EMPTY_TINTS);
+        RenderType type = renderType != null ? renderType : defaultBlockSheet(blockState);
+        collector.submitCustomGeometry(poseStack, type, (pose, buffer) -> {
+            QuadInstance instance = new QuadInstance();
+            instance.setLightCoords(packedLight);
+            instance.setOverlayCoords(packedOverlay);
+            for (BlockStateModelPart part : parts) {
+                for (Direction direction : Direction.values()) {
+                    putColoredQuads(part.getQuads(direction), pose, buffer, instance, tintLayers, argbColor);
+                }
+                putColoredQuads(part.getQuads(null), pose, buffer, instance, tintLayers, argbColor);
+            }
+        });
+    }
+
+    private static void putColoredQuads(List<BakedQuad> quads, PoseStack.Pose pose, VertexConsumer buffer, QuadInstance instance, int[] tintLayers, int argbColor) {
+        for (BakedQuad quad : quads) {
+            int tintIndex = quad.materialInfo().tintIndex();
+            int baseColor = tintIndex != -1 && tintIndex < tintLayers.length ? tintLayers[tintIndex] : -1;
+            instance.setColor(ARGB.multiply(baseColor, argbColor));
+            buffer.putBakedQuad(pose, quad, instance);
+        }
+    }
+
+    private static RenderType defaultBlockSheet(BlockState blockState) {
+        Minecraft minecraft = Minecraft.getInstance();
+        if (minecraft.getModelManager() != null) {
+            boolean translucent = minecraft.getModelManager().getBlockStateModelSet()
+                    .get(blockState)
+                    .hasMaterialFlag(BlockAndTintGetter.EMPTY, BlockPos.ZERO, blockState, 1);
+            return translucent ? Sheets.translucentBlockSheet() : Sheets.cutoutBlockSheet();
+        }
+        return Sheets.cutoutBlockSheet();
+    }
+
     public static void renderLevelItem(ItemStack itemStack, PoseStack poseStack, SubmitNodeCollector collector, int packedLight, int packedOverlay) {
         ItemModelResolver resolver = getItemModelResolver();
         if (resolver == null || collector == null || itemStack.isEmpty()) {
@@ -119,6 +185,10 @@ public class RenderJSBlockRender {
     }
 
     public static void renderHitOutline(BlockState blockState, PoseStack poseStack, SubmitNodeCollector collector, Entity entity, BlockPos blockPos, RenderType renderType) {
+        renderHitOutline(blockState, poseStack, collector, entity, blockPos, renderType, 0x66FFFFFF);
+    }
+
+    public static void renderHitOutline(BlockState blockState, PoseStack poseStack, SubmitNodeCollector collector, Entity entity, BlockPos blockPos, RenderType renderType, int argbColor) {
         if (collector == null || entity == null) {
             return;
         }
@@ -126,7 +196,7 @@ public class RenderJSBlockRender {
             renderType = RenderTypes.lines();
         }
         VoxelShape shape = blockState.getShape(entity.level(), blockPos, CollisionContext.of(entity));
-        int color = 0x66FFFFFF;
+        int color = argbColor;
         float width = 1.0F;
         RenderType finalRenderType = renderType;
         collector.submitCustomGeometry(poseStack, finalRenderType, (pose, buffer) -> shape.forAllEdges((x1, y1, z1, x2, y2, z2) -> {

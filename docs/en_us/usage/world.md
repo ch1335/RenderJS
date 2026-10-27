@@ -29,18 +29,62 @@ RenderJSEvents.onLevelRender(event => {
 
 | Method | Description |
 |---|---|
-| `renderSingleBlock(blockState, poseStack)` | render a block model (full bright) |
-| `renderSingleBlock(blockState, poseStack, packedLight, packedOverlay)` | with explicit light/overlay |
+| `renderSingleBlock(blockState, poseStack)` | render a block model (full bright, no tint) |
+| `renderSingleBlock(blockState, poseStack, color)` | tint the whole model |
+| `renderSingleBlock(blockState, poseStack, color, renderType)` | tint + custom RenderType (layering / through terrain) |
+| `renderSingleBlock(blockState, poseStack, color, renderType, packedLight)` | with explicit light |
+| `renderSingleBlock(blockState, poseStack, color, renderType, packedLight, packedOverlay)` | all parameters |
+| `renderSingleBlockWithType(blockState, poseStack, renderType)` | no tint, custom RenderType |
+| `renderSingleBlockWithType(blockState, poseStack, renderType, packedLight)` | no tint + light |
+| `renderSingleBlockWithType(blockState, poseStack, renderType, packedLight, packedOverlay)` | no tint + light/overlay |
 | `renderLevelItem(itemStack, poseStack)` | render an item in the `GROUND` context |
 | `renderLevelItem(itemStack, poseStack, packedLight)` | with explicit light |
+| `renderLevelItem(itemStack, poseStack, packedLight, packedOverlay)` | with explicit light/overlay |
 | `renderHitOutline(blockState, poseStack)` | draw a block outline |
-| `renderHitOutline(blockState, poseStack, entity, blockPos)` | outline using the entity's collision context/position |
+| `renderHitOutline(blockState, poseStack, color)` | custom outline color |
+| `renderHitOutline(blockState, poseStack, color, renderType)` | custom color + RenderType |
+| `renderHitOutlineWithType(blockState, poseStack, renderType)` | custom RenderType (default color) |
 | `packLight(level, blockPos)` | packed light value at a position |
 | `LightCoordsUtil.FULL_BRIGHT` | full-bright light constant (global binding) |
 
+## Color
+
+`renderSingleBlock` and `renderHitOutline` accept an ARGB color to tint the whole model:
+
+```js
+RenderJSEvents.onLevelRender(event => {
+  const poseStack = event.getPoseStack()
+  event.pushPose()
+  event.transformerCamera(poseStack)
+  event.transformerToBlockPose(poseStack, new BlockPos(0, 64, 0))
+
+  const state = Blocks.DIAMOND_BLOCK.defaultBlockState()
+
+  // tint the whole model red (all quads, including ones without a tint index)
+  event.renderSingleBlock(state, poseStack, 0xFFFF0000)
+
+  // combined with a RenderType (e.g. no-depth, drawn through terrain)
+  event.renderSingleBlock(state, poseStack, 0x80FF0000, RenderJSRenderType.TOP_LAYER_TARGET)
+
+  // outline color
+  event.renderHitOutline(state, poseStack, 0xFFFF0000)
+
+  event.popPose()
+})
+```
+
+Notes:
+
+- Whole-model tint is implemented with custom geometry (`QuadInstance` vertex colors) and is submitted with a
+  **single RenderType**: semi-transparent colors need a translucent RenderType (custom pipeline) to blend;
+- the model's own tints (grass, leaves, ...) are applied first, then multiplied by your color;
+- special models (chests, banners, ...) have no plain model parts and fall back to the default path, so they
+  are **not** tinted;
+- `renderLevelItem` (items) does not support whole-model tint yet.
+
 ## Render state
 
-There is no global color/RenderType state: pass a RenderType directly to `renderSingleBlock(..., renderType)` when you need custom layering (see the section above).
+There is no global color/RenderType state: pass a RenderType directly to `renderSingleBlockWithType(..., renderType)` when you need custom layering (see the section above).
 
 ## 3D transforms
 
@@ -126,10 +170,10 @@ RenderJSEvents.onLevelRender(event => {
   event.renderSingleBlock(state, poseStack)
 
   // block drawn through terrain, always visible
-  event.renderSingleBlock(state, poseStack, RenderJSRenderType.TOP_LAYER_TARGET)
+  event.renderSingleBlockWithType(state, poseStack, RenderJSRenderType.TOP_LAYER_TARGET)
 
   // outline drawn through terrain
-  event.renderHitOutline(state, poseStack, RenderJSRenderType.TOP_LAYER_LINE_TARGET)
+  event.renderHitOutlineWithType(state, poseStack, RenderJSRenderType.TOP_LAYER_LINE_TARGET)
 
   event.popPose()
 })
@@ -166,14 +210,14 @@ Common layering needs:
 | Draw in front of existing geometry without writing depth | `new DepthStencilState(CompareOp.LESS_THAN_OR_EQUAL, false)` |
 
 If the two built-in render types are not enough, register your own pipeline + RenderType as above and pass it
-to `renderSingleBlock(state, poseStack, yourRenderType)`. A RenderType is just an object; you can store and
+to `renderSingleBlockWithType(state, poseStack, yourRenderType)`. A RenderType is just an object; you can store and
 pass it around from scripts.
 
 Notes:
 
 - Geometry drawn through terrain is still subject to **batch sorting**: RenderJS submits it after normal
   terrain, but its order relative to other translucent/special batches is decided by the engine by RenderType;
-- `renderSingleBlock(..., renderType)` works for **regular block models**. Special models (chests, banners,
+- `renderSingleBlockWithType(..., renderType)` works for **regular block models**. Special models (chests, banners,
   ...) have no regular model parts and fall back to the default render type, so they will not draw through
   terrain.
 

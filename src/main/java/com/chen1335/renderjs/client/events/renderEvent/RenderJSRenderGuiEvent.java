@@ -6,6 +6,7 @@ import com.chen1335.renderjs.API.IRenderJSPoseStackHelper;
 import com.chen1335.renderjs.RenderJS;
 import com.chen1335.renderjs.kubejs.bindings.event.RenderJSEvents;
 import dev.latvian.mods.kubejs.client.ClientKubeEvent;
+import dev.latvian.mods.kubejs.typings.Info;
 import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.neoforged.api.distmarker.Dist;
@@ -15,6 +16,7 @@ import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import org.joml.Matrix3x2fStack;
 
 
+@Info("HUD render event context. Fires before and after the HUD is rendered.")
 @EventBusSubscriber(value = Dist.CLIENT, modid = RenderJS.MODID)
 public class RenderJSRenderGuiEvent implements ClientKubeEvent, IGuiRenderHelper, IGuiRenderEvent, IRenderJSPoseStackHelper {
     public static boolean SUSPENDED = false;

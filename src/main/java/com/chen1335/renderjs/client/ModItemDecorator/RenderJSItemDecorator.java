@@ -3,6 +3,8 @@ package com.chen1335.renderjs.client.ModItemDecorator;
 import com.chen1335.renderjs.API.IGuiRenderHelper;
 import com.chen1335.renderjs.API.IRenderJSPoseStackHelper;
 import com.chen1335.renderjs.RenderJS;
+import dev.latvian.mods.kubejs.typings.Info;
+import dev.latvian.mods.kubejs.typings.Param;
 import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -15,6 +17,7 @@ import org.joml.Matrix3x2fStack;
 import java.util.ArrayList;
 import java.util.function.Consumer;
 
+@Info("Item decoration implementation. Scripts normally create decorations through registerItemDecorations.")
 public class RenderJSItemDecorator implements IItemDecorator {
     private final ArrayList<Consumer<RenderContext>> consumers;
 
@@ -37,20 +40,30 @@ public class RenderJSItemDecorator implements IItemDecorator {
         return true;
     }
 
+    @Info(value = "Adds an additional decoration callback.",
+            params = {@Param(name = "consumer", value = "Callback that draws the decoration.")})
     public void addRender(Consumer<RenderContext> consumer) {
         consumers.add(consumer);
     }
 
+    @Info("Removes all decoration callbacks.")
     public void clear() {
         consumers.clear();
     }
 
+    @Info("Render context passed to item decoration callbacks. Provides the item stack, the icon offset and 2D drawing helpers.")
     public static class RenderContext implements IGuiRenderHelper, IRenderJSPoseStackHelper {
         private static final RenderContext context = new RenderContext(null, null, null, 0, 0);
+
+        @Info("Font used to draw text on the item icon.")
         public Font font;
+        @Info("Item stack whose icon is being decorated.")
         public ItemStack itemStack;
+        @Info("Horizontal offset of the item icon, in GUI pixels.")
         public int xOffset;
+        @Info("Vertical offset of the item icon, in GUI pixels.")
         public int yOffset;
+        @Info("GUI graphics extractor of the current frame.")
         public GuiGraphicsExtractor guiGraphics;
 
         public RenderContext(GuiGraphicsExtractor guiGraphics, Font font, ItemStack itemStack, int xOffset, int yOffset) {
@@ -61,10 +74,12 @@ public class RenderJSItemDecorator implements IItemDecorator {
             this.guiGraphics = guiGraphics;
         }
 
+        @HideFromJS
         public static RenderContext getContext() {
             return context;
         }
 
+        @HideFromJS
         public RenderContext update(GuiGraphicsExtractor guiGraphics, Font font, ItemStack itemStack, int xOffset, int yOffset) {
             this.font = font;
             this.itemStack = itemStack;

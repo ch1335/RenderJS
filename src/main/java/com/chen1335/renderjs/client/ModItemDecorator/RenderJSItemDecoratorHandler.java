@@ -4,6 +4,7 @@ import com.chen1335.renderjs.RenderJS;
 import com.chen1335.renderjs.RenderJSClient;
 import com.chen1335.renderjs.client.events.ItemDecorationsRegisterEvent;
 import com.chen1335.renderjs.kubejs.bindings.event.RenderJSEvents;
+import dev.latvian.mods.kubejs.typings.Info;
 import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.world.item.Item;
 import net.neoforged.api.distmarker.Dist;
@@ -14,6 +15,7 @@ import net.neoforged.neoforge.client.event.RegisterItemDecorationsEvent;
 import java.util.HashMap;
 import java.util.function.Consumer;
 
+@Info("Internal item decoration manager. Scripts should use the registerItemDecorations event instead.")
 @EventBusSubscriber(modid = RenderJS.MODID, value = Dist.CLIENT)
 public class RenderJSItemDecoratorHandler {
     @HideFromJS
@@ -30,6 +32,7 @@ public class RenderJSItemDecoratorHandler {
         return RenderJSClient.ITEM_DECORATOR_HANDLER;
     }
 
+    @Info("Removes all registered item decorations.")
     public static void clearRender() {
         getInstance().registeredGlobalItemDecorator.clear();
         registeredItemDecorators.values().forEach(RenderJSItemDecorator::clear);

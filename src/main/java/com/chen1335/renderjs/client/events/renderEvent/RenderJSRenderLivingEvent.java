@@ -7,6 +7,7 @@ import com.chen1335.renderjs.RenderJS;
 import com.chen1335.renderjs.kubejs.bindings.event.RenderJSEvents;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.latvian.mods.kubejs.client.ClientKubeEvent;
+import dev.latvian.mods.kubejs.typings.Info;
 import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
@@ -17,6 +18,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderLivingEvent;
 
 
+@Info("Living entity render event context. Fires before and after a living entity model is submitted.")
 @EventBusSubscriber(value = Dist.CLIENT, modid = RenderJS.MODID)
 public class RenderJSRenderLivingEvent implements ClientKubeEvent, ILevelRenderHelper, ILevelPoseHelper, IRenderJSEvent {
 
@@ -63,14 +65,17 @@ public class RenderJSRenderLivingEvent implements ClientKubeEvent, ILevelRenderH
         return event.getSubmitNodeCollector();
     }
 
+    @Info("Returns the render state of the living entity being rendered.")
     public LivingEntityRenderState getRenderState() {
         return renderState;
     }
 
+    @Info("Returns the renderer of the living entity being rendered.")
     public LivingEntityRenderer<?, ?, ?> getRenderer() {
         return renderer;
     }
 
+    @Info("Returns the partial tick of the current frame.")
     public float getPartialTick() {
         return partialTick;
     }

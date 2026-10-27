@@ -7,6 +7,7 @@ import com.chen1335.renderjs.RenderJS;
 import com.chen1335.renderjs.kubejs.bindings.event.RenderJSEvents;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.latvian.mods.kubejs.client.ClientKubeEvent;
+import dev.latvian.mods.kubejs.typings.Info;
 import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.neoforged.api.distmarker.Dist;
@@ -18,6 +19,7 @@ import net.neoforged.neoforge.client.event.SubmitCustomGeometryEvent;
  * World rendering context. MC 26.1.2 dropped the per-stage level render events; custom world
  * geometry is submitted through {@link SubmitCustomGeometryEvent} instead.
  */
+@Info("World render event context. Geometry submitted here is queued for the current frame's custom geometry pass.")
 @EventBusSubscriber(value = Dist.CLIENT, modid = RenderJS.MODID)
 public class RenderJSRenderLevelEvent implements ClientKubeEvent, ILevelRenderEvent, ILevelRenderHelper, ILevelPoseHelper {
     private final SubmitCustomGeometryEvent event;
@@ -42,16 +44,19 @@ public class RenderJSRenderLevelEvent implements ClientKubeEvent, ILevelRenderEv
     }
 
     @Override
+    @HideFromJS
     public SubmitCustomGeometryEvent getEvent() {
         return event;
     }
 
     @Override
+    @HideFromJS
     public PoseStack getPoseStack() {
         return event.getPoseStack();
     }
 
     @Override
+    @HideFromJS
     public SubmitNodeCollector getSubmitNodeCollector() {
         return event.getSubmitNodeCollector();
     }

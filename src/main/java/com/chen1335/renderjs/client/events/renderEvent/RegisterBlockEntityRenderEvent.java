@@ -4,6 +4,8 @@ import com.chen1335.renderjs.RenderJS;
 import com.chen1335.renderjs.client.renderer.RenderJSBlockEntityRenderer;
 import com.chen1335.renderjs.kubejs.bindings.event.RenderJSEvents;
 import dev.latvian.mods.kubejs.event.KubeEvent;
+import dev.latvian.mods.kubejs.typings.Info;
+import dev.latvian.mods.kubejs.typings.Param;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
@@ -18,6 +20,7 @@ import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Info("Registration event for block entity renderers. Registration is applied on game start and swapped on script reload.")
 @EventBusSubscriber(value = Dist.CLIENT, modid = RenderJS.MODID)
 public class RegisterBlockEntityRenderEvent implements KubeEvent {
 
@@ -35,6 +38,11 @@ public class RegisterBlockEntityRenderEvent implements KubeEvent {
         RenderJSEvents.REGISTER_BLOCK_ENTITY_RENDER.post(new RegisterBlockEntityRenderEvent(event));
     }
 
+    @Info(value = "Registers a block entity renderer, or replaces the renderer of an already registered block entity type. Replacing is applied on script reload.",
+            params = {
+                    @Param(name = "entityType", value = "Block entity type to render."),
+                    @Param(name = "provider", value = "Provider that creates the renderer for the given type.")
+            })
     public <T extends BlockEntity, S extends BlockEntityRenderState> void registerOrSwap(BlockEntityType<T> entityType, BlockEntityRendererProvider<T, S> provider) {
         if (event != null) {
             BlockEntityRendererProvider<T, S> wrapped = context -> {
