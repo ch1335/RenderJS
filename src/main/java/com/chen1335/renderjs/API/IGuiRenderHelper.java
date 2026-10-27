@@ -49,40 +49,23 @@ public interface IGuiRenderHelper extends IColorHelper {
                     @Param(name = "x", value = "Left edge of the destination rectangle, in GUI pixels."),
                     @Param(name = "y", value = "Top edge of the destination rectangle, in GUI pixels."),
                     @Param(name = "width", value = "Destination width, in GUI pixels."),
-                    @Param(name = "height", value = "Destination height, in GUI pixels."),
-                    @Param(name = "blitOffset", value = "Legacy depth offset. Ignored in 26.1.2 and kept for compatibility.")
+                    @Param(name = "height", value = "Destination height, in GUI pixels.")
             })
-    default void drawTextureWithSize(Identifier texture, int x, int y, int width, int height, int blitOffset) {
+    default void drawTextureWithSize(Identifier texture, int x, int y, int width, int height) {
         withPose(guiGraphics -> guiGraphics.blit(texture, x, y, x + width, y + height, 0.0F, 1.0F, 0.0F, 1.0F));
     }
 
-    @Info(value = "Draws a texture stretched to the specified size.",
+    @Info(value = "Draws a texture stretched to the specified size, tinted by the given ARGB color.",
             params = {
                     @Param(name = "texture", value = "Identifier of the texture to draw."),
                     @Param(name = "x", value = "Left edge of the destination rectangle, in GUI pixels."),
                     @Param(name = "y", value = "Top edge of the destination rectangle, in GUI pixels."),
                     @Param(name = "width", value = "Destination width, in GUI pixels."),
-                    @Param(name = "height", value = "Destination height, in GUI pixels.")
+                    @Param(name = "height", value = "Destination height, in GUI pixels."),
+                    @Param(name = "color", value = "ARGB color in 0xAARRGGBB format.")
             })
-    default void drawTextureWithSize(Identifier texture, int x, int y, int width, int height) {
-        drawTextureWithSize(texture, x, y, width, height, 0);
-    }
-
-    @Info(value = "Draws a sub-region of a texture.",
-            params = {
-                    @Param(name = "texture", value = "Identifier of the texture to draw."),
-                    @Param(name = "x", value = "Left edge of the destination rectangle, in GUI pixels."),
-                    @Param(name = "y", value = "Top edge of the destination rectangle, in GUI pixels."),
-                    @Param(name = "textureWidth", value = "Full width of the texture, used to convert UV coordinates."),
-                    @Param(name = "textureHeight", value = "Full height of the texture, used to convert UV coordinates."),
-                    @Param(name = "uOffset", value = "Horizontal source offset, in texture pixels."),
-                    @Param(name = "vOffset", value = "Vertical source offset, in texture pixels."),
-                    @Param(name = "uWidth", value = "Width of the source region, in texture pixels."),
-                    @Param(name = "vHeight", value = "Height of the source region, in texture pixels."),
-                    @Param(name = "blitOffset", value = "Legacy depth offset. Ignored in 26.1.2 and kept for compatibility.")
-            })
-    default void drawTexture(Identifier texture, int x, int y, int textureWidth, int textureHeight, int uOffset, int vOffset, int uWidth, int vHeight, int blitOffset) {
-        withPose(guiGraphics -> guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, x, y, uOffset, vOffset, uWidth, vHeight, uWidth, vHeight, textureWidth, textureHeight));
+    default void drawTextureWithSize(Identifier texture, int x, int y, int width, int height, long color) {
+        withPose(guiGraphics -> guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, x, y, 0.0F, 0.0F, width, height, width, height, width, height, (int) color));
     }
 
     @Info(value = "Draws a sub-region of a texture.",
@@ -98,7 +81,24 @@ public interface IGuiRenderHelper extends IColorHelper {
                     @Param(name = "vHeight", value = "Height of the source region, in texture pixels.")
             })
     default void drawTexture(Identifier texture, int x, int y, int textureWidth, int textureHeight, int uOffset, int vOffset, int uWidth, int vHeight) {
-        drawTexture(texture, x, y, textureWidth, textureHeight, uOffset, vOffset, uWidth, vHeight, 0);
+        withPose(guiGraphics -> guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, x, y, uOffset, vOffset, uWidth, vHeight, uWidth, vHeight, textureWidth, textureHeight));
+    }
+
+    @Info(value = "Draws a sub-region of a texture, tinted by the given ARGB color.",
+            params = {
+                    @Param(name = "texture", value = "Identifier of the texture to draw."),
+                    @Param(name = "x", value = "Left edge of the destination rectangle, in GUI pixels."),
+                    @Param(name = "y", value = "Top edge of the destination rectangle, in GUI pixels."),
+                    @Param(name = "textureWidth", value = "Full width of the texture, used to convert UV coordinates."),
+                    @Param(name = "textureHeight", value = "Full height of the texture, used to convert UV coordinates."),
+                    @Param(name = "uOffset", value = "Horizontal source offset, in texture pixels."),
+                    @Param(name = "vOffset", value = "Vertical source offset, in texture pixels."),
+                    @Param(name = "uWidth", value = "Width of the source region, in texture pixels."),
+                    @Param(name = "vHeight", value = "Height of the source region, in texture pixels."),
+                    @Param(name = "color", value = "ARGB color in 0xAARRGGBB format.")
+            })
+    default void drawTexture(Identifier texture, int x, int y, int textureWidth, int textureHeight, int uOffset, int vOffset, int uWidth, int vHeight, long color) {
+        withPose(guiGraphics -> guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, x, y, uOffset, vOffset, uWidth, vHeight, uWidth, vHeight, textureWidth, textureHeight, (int) color));
     }
 
     @Info(value = "Draws a texture at its native size.",
@@ -113,19 +113,17 @@ public interface IGuiRenderHelper extends IColorHelper {
         drawTexture(texture, x, y, textureWidth, textureHeight, 0, 0, textureWidth, textureHeight);
     }
 
-    @Info(value = "Draws text without a drop shadow, with an explicit RGBA color.",
+    @Info(value = "Draws a texture at its native size, tinted by the given ARGB color.",
             params = {
-                    @Param(name = "component", value = "Text component to draw."),
-                    @Param(name = "x", value = "Left edge of the text, in GUI pixels."),
-                    @Param(name = "y", value = "Top edge of the text, in GUI pixels."),
-                    @Param(name = "r", value = "Red channel, 0 to 255."),
-                    @Param(name = "g", value = "Green channel, 0 to 255."),
-                    @Param(name = "b", value = "Blue channel, 0 to 255."),
-                    @Param(name = "a", value = "Alpha channel, 0 to 255.")
+                    @Param(name = "texture", value = "Identifier of the texture to draw."),
+                    @Param(name = "x", value = "Left edge of the destination rectangle, in GUI pixels."),
+                    @Param(name = "y", value = "Top edge of the destination rectangle, in GUI pixels."),
+                    @Param(name = "textureWidth", value = "Width of the texture, in pixels."),
+                    @Param(name = "textureHeight", value = "Height of the texture, in pixels."),
+                    @Param(name = "color", value = "ARGB color in 0xAARRGGBB format.")
             })
-    default void drawString(Component component, int x, int y, int r, int g, int b, int a) {
-        int color = argb(r, g, b, a);
-        withPose(guiGraphics -> guiGraphics.text(Minecraft.getInstance().font, component, x, y, color, false));
+    default void drawTexture(Identifier texture, int x, int y, int textureWidth, int textureHeight, long color) {
+        drawTexture(texture, x, y, textureWidth, textureHeight, 0, 0, textureWidth, textureHeight, color);
     }
 
     @Info(value = "Draws text without a drop shadow.",
@@ -137,21 +135,6 @@ public interface IGuiRenderHelper extends IColorHelper {
             })
     default void drawString(Component component, int x, int y, long color) {
         withPose(guiGraphics -> guiGraphics.text(Minecraft.getInstance().font, component, x, y, (int) color, false));
-    }
-
-    @Info(value = "Draws text with a drop shadow, with an explicit RGBA color.",
-            params = {
-                    @Param(name = "component", value = "Text component to draw."),
-                    @Param(name = "x", value = "Left edge of the text, in GUI pixels."),
-                    @Param(name = "y", value = "Top edge of the text, in GUI pixels."),
-                    @Param(name = "r", value = "Red channel, 0 to 255."),
-                    @Param(name = "g", value = "Green channel, 0 to 255."),
-                    @Param(name = "b", value = "Blue channel, 0 to 255."),
-                    @Param(name = "a", value = "Alpha channel, 0 to 255.")
-            })
-    default void drawShadowString(Component component, int x, int y, int r, int g, int b, int a) {
-        int color = argb(r, g, b, a);
-        withPose(guiGraphics -> guiGraphics.text(Minecraft.getInstance().font, component, x, y, color, true));
     }
 
     @Info(value = "Draws text with a drop shadow.",
@@ -189,20 +172,6 @@ public interface IGuiRenderHelper extends IColorHelper {
         withPose(guiGraphics -> guiGraphics.fill(fromX, lineY, toX + 1, lineY + 1, (int) color));
     }
 
-    @Info(value = "Draws a horizontal line, with an explicit RGBA color.",
-            params = {
-                    @Param(name = "minX", value = "Left edge of the line, inclusive."),
-                    @Param(name = "maxX", value = "Right edge of the line, exclusive."),
-                    @Param(name = "y", value = "Vertical position of the line."),
-                    @Param(name = "r", value = "Red channel, 0 to 255."),
-                    @Param(name = "g", value = "Green channel, 0 to 255."),
-                    @Param(name = "b", value = "Blue channel, 0 to 255."),
-                    @Param(name = "a", value = "Alpha channel, 0 to 255.")
-            })
-    default void hLine(int minX, int maxX, int y, int r, int g, int b, int a) {
-        hLine(minX, maxX, y, argb(r, g, b, a));
-    }
-
     @Info(value = "Draws a vertical line.",
             params = {
                     @Param(name = "x", value = "Horizontal position of the line."),
@@ -222,20 +191,6 @@ public interface IGuiRenderHelper extends IColorHelper {
         withPose(guiGraphics -> guiGraphics.fill(lineX, fromY + 1, lineX + 1, toY, (int) color));
     }
 
-    @Info(value = "Draws a vertical line, with an explicit RGBA color.",
-            params = {
-                    @Param(name = "x", value = "Horizontal position of the line."),
-                    @Param(name = "minY", value = "Top edge of the line, inclusive."),
-                    @Param(name = "maxY", value = "Bottom edge of the line, exclusive."),
-                    @Param(name = "r", value = "Red channel, 0 to 255."),
-                    @Param(name = "g", value = "Green channel, 0 to 255."),
-                    @Param(name = "b", value = "Blue channel, 0 to 255."),
-                    @Param(name = "a", value = "Alpha channel, 0 to 255.")
-            })
-    default void vLine(int x, int minY, int maxY, int r, int g, int b, int a) {
-        vLine(x, minY, maxY, argb(r, g, b, a));
-    }
-
     @Info(value = "Draws a filled rectangle.",
             params = {
                     @Param(name = "minX", value = "Left edge of the rectangle."),
@@ -248,18 +203,4 @@ public interface IGuiRenderHelper extends IColorHelper {
         withPose(guiGraphics -> guiGraphics.fill(minX, minY, maxX, maxY, (int) color));
     }
 
-    @Info(value = "Draws a filled rectangle, with an explicit RGBA color.",
-            params = {
-                    @Param(name = "minX", value = "Left edge of the rectangle."),
-                    @Param(name = "minY", value = "Top edge of the rectangle."),
-                    @Param(name = "maxX", value = "Right edge of the rectangle."),
-                    @Param(name = "maxY", value = "Bottom edge of the rectangle."),
-                    @Param(name = "r", value = "Red channel, 0 to 255."),
-                    @Param(name = "g", value = "Green channel, 0 to 255."),
-                    @Param(name = "b", value = "Blue channel, 0 to 255."),
-                    @Param(name = "a", value = "Alpha channel, 0 to 255.")
-            })
-    default void fill(int minX, int minY, int maxX, int maxY, int r, int g, int b, int a) {
-        fill(minX, minY, maxX, maxY, argb(r, g, b, a));
-    }
 }

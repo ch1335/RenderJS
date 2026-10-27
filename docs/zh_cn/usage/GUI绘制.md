@@ -21,9 +21,12 @@
 | `renderGuiItem(itemStack, x, y)` | 画物品图标（16×16） |
 | `drawTexture(id, x, y, textureWidth, textureHeight)` | 按原始尺寸画整张贴图 |
 | `drawTexture(id, x, y, textureWidth, textureHeight, u, v, uWidth, vHeight)` | 画贴图的一部分（UV 子区域） |
+| `drawTexture(id, x, y, textureWidth, textureHeight, color)` | 按原始尺寸画整张贴图，并按 ARGB 颜色着色 |
+| `drawTexture(id, x, y, textureWidth, textureHeight, u, v, uWidth, vHeight, color)` | 画贴图的一部分，并按 ARGB 颜色着色 |
 | `drawTextureWithSize(id, x, y, width, height)` | 把整张贴图拉伸到指定尺寸 |
+| `drawTextureWithSize(id, x, y, width, height, color)` | 把整张贴图拉伸到指定尺寸，并按 ARGB 颜色着色 |
 
-颜色参数同时支持两种写法：`color`（`long`，推荐 `0xAARRGGBB`）或 `(r, g, b, a)` 四个 0–255 整数。
+颜色参数统一使用 `long` 的 ARGB 颜色（`0xAARRGGBB`）；需要从四个通道拼色时可以用 `event.argb(r, g, b, a)`。
 
 `textureWidth` / `textureHeight` 是**整张贴图的像素尺寸**，用于把 `u/v/uWidth/vHeight` 换算成 UV；
 `drawTextureWithSize` 会忽略 UV，直接把整张图拉伸。

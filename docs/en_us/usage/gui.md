@@ -21,9 +21,12 @@ Available in `onGuiPreRender` / `onGuiPostRender` (HUD) and `onScreenPreRender` 
 | `renderGuiItem(itemStack, x, y)` | item icon (16x16) |
 | `drawTexture(id, x, y, textureWidth, textureHeight)` | full texture at its native size |
 | `drawTexture(id, x, y, textureWidth, textureHeight, u, v, uWidth, vHeight)` | part of a texture (UV sub-rect) |
+| `drawTexture(id, x, y, textureWidth, textureHeight, color)` | full texture at its native size with an ARGB tint |
+| `drawTexture(id, x, y, textureWidth, textureHeight, u, v, uWidth, vHeight, color)` | part of a texture with an ARGB tint |
 | `drawTextureWithSize(id, x, y, width, height)` | stretch the whole texture to the given size |
+| `drawTextureWithSize(id, x, y, width, height, color)` | stretch the whole texture to the given size with an ARGB tint |
 
-Colors accept either a `color` (`long`, `0xAARRGGBB` recommended) or four 0-255 integers `(r, g, b, a)`.
+Colors use a `long` ARGB value (`0xAARRGGBB`); use `event.argb(r, g, b, a)` when you need to pack four channels.
 
 `textureWidth` / `textureHeight` are the **full texture dimensions in pixels**, used to convert
 `u/v/uWidth/vHeight` into UV coordinates. `drawTextureWithSize` ignores UVs and stretches the whole texture.
