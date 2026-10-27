@@ -15,7 +15,6 @@ public interface ILevelRenderEvent extends IRenderJSEvent {
     @HideFromJS
     SubmitCustomGeometryEvent getEvent();
 
-    @HideFromJS
     default PoseStack getPoseStack() {
         return getEvent().getPoseStack();
     }

@@ -17,7 +17,6 @@ public interface IGuiRenderEvent extends IRenderJSEvent {
         return Minecraft.getInstance().getWindow();
     }
 
-    @HideFromJS
     default Matrix3x2fStack getPoseStack() {
         return getEvent().getGuiGraphics().pose();
     }

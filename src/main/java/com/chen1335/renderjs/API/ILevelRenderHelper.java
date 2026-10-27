@@ -67,7 +67,7 @@ public interface ILevelRenderHelper {
                     @Param(name = "poseStack", value = "Pose stack that positions the model."),
                     @Param(name = "argbColor", value = "Tint color in 0xAARRGGBB format. Use -1 for no tint.")
             })
-    default void renderSingleBlock(BlockState blockState, PoseStack poseStack, int argbColor) {
+    default void renderSingleBlock(BlockState blockState, PoseStack poseStack, long argbColor) {
         renderSingleBlock(blockState, poseStack, argbColor, null, LightCoordsUtil.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
     }
 
@@ -78,7 +78,7 @@ public interface ILevelRenderHelper {
                     @Param(name = "argbColor", value = "Tint color in 0xAARRGGBB format. Use -1 for no tint."),
                     @Param(name = "renderType", value = "Render type controlling depth and blending. May be null to use the default block render type.")
             })
-    default void renderSingleBlock(BlockState blockState, PoseStack poseStack, int argbColor, @Nullable RenderType renderType) {
+    default void renderSingleBlock(BlockState blockState, PoseStack poseStack, long argbColor, @Nullable RenderType renderType) {
         renderSingleBlock(blockState, poseStack, argbColor, renderType, LightCoordsUtil.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
     }
 
@@ -90,7 +90,7 @@ public interface ILevelRenderHelper {
                     @Param(name = "renderType", value = "Render type controlling depth and blending. May be null to use the default block render type."),
                     @Param(name = "packedLight", value = "Packed block and sky light coordinates.")
             })
-    default void renderSingleBlock(BlockState blockState, PoseStack poseStack, int argbColor, @Nullable RenderType renderType, int packedLight) {
+    default void renderSingleBlock(BlockState blockState, PoseStack poseStack, long argbColor, @Nullable RenderType renderType, int packedLight) {
         renderSingleBlock(blockState, poseStack, argbColor, renderType, packedLight, OverlayTexture.NO_OVERLAY);
     }
 
@@ -103,8 +103,8 @@ public interface ILevelRenderHelper {
                     @Param(name = "packedLight", value = "Packed block and sky light coordinates."),
                     @Param(name = "packedOverlay", value = "Packed overlay texture coordinates.")
             })
-    default void renderSingleBlock(BlockState blockState, PoseStack poseStack, int argbColor, @Nullable RenderType renderType, int packedLight, int packedOverlay) {
-        RenderJSBlockRender.renderSingleBlockWithColor(blockState, poseStack, getSubmitNodeCollector(), renderType, argbColor, packedLight, packedOverlay);
+    default void renderSingleBlock(BlockState blockState, PoseStack poseStack, long argbColor, @Nullable RenderType renderType, int packedLight, int packedOverlay) {
+        RenderJSBlockRender.renderSingleBlockWithColor(blockState, poseStack, getSubmitNodeCollector(), renderType, (int) argbColor, packedLight, packedOverlay);
     }
 
     @Info(value = "Renders a block model with an explicit render type but no tinting.",
@@ -155,7 +155,7 @@ public interface ILevelRenderHelper {
                     @Param(name = "poseStack", value = "Pose stack that positions the outline."),
                     @Param(name = "argbColor", value = "Outline color in 0xAARRGGBB format.")
             })
-    default void renderHitOutline(BlockState blockState, PoseStack poseStack, int argbColor) {
+    default void renderHitOutline(BlockState blockState, PoseStack poseStack, long argbColor) {
         renderHitOutline(blockState, poseStack, argbColor, null);
     }
 
@@ -166,8 +166,8 @@ public interface ILevelRenderHelper {
                     @Param(name = "argbColor", value = "Outline color in 0xAARRGGBB format."),
                     @Param(name = "renderType", value = "Render type controlling depth and blending. May be null to use the default line render type.")
             })
-    default void renderHitOutline(BlockState blockState, PoseStack poseStack, int argbColor, @Nullable RenderType renderType) {
-        RenderJSBlockRender.renderHitOutline(blockState, poseStack, getSubmitNodeCollector(), Minecraft.getInstance().getCameraEntity(), BlockPos.ZERO, renderType, argbColor);
+    default void renderHitOutline(BlockState blockState, PoseStack poseStack, long argbColor, @Nullable RenderType renderType) {
+        RenderJSBlockRender.renderHitOutline(blockState, poseStack, getSubmitNodeCollector(), Minecraft.getInstance().getCameraEntity(), BlockPos.ZERO, renderType, (int) argbColor);
     }
 
     @Info(value = "Draws the outline of a block with the default color and an explicit render type.",
