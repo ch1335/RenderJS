@@ -1,0 +1,44 @@
+# RenderJS mod metadata for MC 26.1.2 / NeoForge 26.1.2.x.
+# Values in the dollar-curly placeholders below are expanded by the generateModMetadata Gradle task
+# from gradle.properties. Never write a bare dollar-curly sequence outside a value: it is parsed as code.
+license="${mod_license}"
+
+#issueTrackerURL="https://github.com/ch1335/RenderJS/issues" #optional
+#displayURL="https://github.com/ch1335/RenderJS" #optional
+
+[[mods]]
+modId="${mod_id}"
+version="${mod_version}"
+displayName="${mod_name}"
+authors="${mod_authors}"
+description='''${mod_description}'''
+
+# Declares the mixin config added in src/main/resources/renderjs.mixins.json.
+# The block stays even while the mixin list is empty, so the port only has to add entries.
+[[mixins]]
+config="${mod_id}.mixins.json"
+
+[[dependencies.${mod_id}]]
+    modId="neoforge"
+    type="required"
+    versionRange="${neo_version_range}"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="minecraft"
+    type="required"
+    versionRange="${minecraft_version_range}"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="kubejs"
+    type="required"
+    versionRange="[${kubejs_version},)"
+    ordering="AFTER"
+    side="BOTH"
+
+# Do NOT declare [features.<modid>] openGLVersion here: feature checks also run on the dedicated
+# server, where no OpenGL context exists, and the mod would refuse to load (verified during init).
+# Same as the 1.21.1 line, which keeps the feature block commented out.

@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "package": "com.chen1335.renderjs.mixin",
+  "mixins": [],
+  "client": [
+    "GuiGraphicsMixin"
+  ],
+  "minVersion": "0.8",
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
