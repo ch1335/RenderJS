@@ -38,7 +38,7 @@ public final class RenderJSRenderPipelines {
      */
     public static final RenderPipeline LINES_NO_DEPTH = RenderPipeline.builder(RenderPipelines.LINES_SNIPPET)
             .withLocation(Identifier.fromNamespaceAndPath(RenderJS.MODID, "pipeline/lines_no_depth"))
-            .withDepthStencilState(new DepthStencilState(CompareOp.ALWAYS_PASS, false))
+            .withDepthStencilState(new DepthStencilState(CompareOp.ALWAYS_PASS, true))
             .build();
 
     private RenderJSRenderPipelines() {

@@ -14,7 +14,7 @@ RenderJSEvents.onLevelRender(event => {
 
   event.pushPose()
   event.transformerCamera(poseStack)                       // move to camera-relative space
-  event.transformerToBlockPose(poseStack, new BlockPos(0, 64, 0))  // then to the block position
+  event.transformerToXYZ(poseStack, 0, 64, 0)  // then to the block position
   // (0,0,0) is now the north-west-bottom corner of block (0,64,0)
   event.renderHitOutline(Blocks.DIAMOND_BLOCK.defaultBlockState(), poseStack)
   event.popPose()
@@ -22,7 +22,7 @@ RenderJSEvents.onLevelRender(event => {
 ```
 
 - `event.transformerCamera(poseStack)` is equivalent to `translate(-cameraX, -cameraY, -cameraZ)`;
-- `event.transformerToBlockPose(poseStack, pos)` translates to a block position;
+- `event.transformerToXYZ(poseStack, x, y, z)` translates to the given coordinates; `event.transformerToBlockPose(poseStack, pos)` translates to a block position;
 - `event.getCameraPosition()` returns the camera position in world space (`Vec3`).
 
 ## Rendering methods
@@ -56,7 +56,7 @@ RenderJSEvents.onLevelRender(event => {
   const poseStack = event.getPoseStack()
   event.pushPose()
   event.transformerCamera(poseStack)
-  event.transformerToBlockPose(poseStack, new BlockPos(0, 64, 0))
+  event.transformerToXYZ(poseStack, 0, 64, 0)
 
   const state = Blocks.DIAMOND_BLOCK.defaultBlockState()
 
@@ -113,7 +113,7 @@ RenderJSEvents.onLevelRender(event => {
   const poseStack = event.getPoseStack()
   event.pushPose()
   event.transformerCamera(poseStack)
-  event.transformerToBlockPose(poseStack, new BlockPos(0, 64, 0))
+  event.transformerToXYZ(poseStack, 0, 64, 0)
 
   // full-bright diamond block
   event.renderSingleBlock(Blocks.DIAMOND_BLOCK.defaultBlockState(), poseStack)
@@ -162,7 +162,7 @@ RenderJSEvents.onLevelRender(event => {
   const poseStack = event.getPoseStack()
   event.pushPose()
   event.transformerCamera(poseStack)
-  event.transformerToBlockPose(poseStack, new BlockPos(0, 64, 0))
+  event.transformerToXYZ(poseStack, 0, 64, 0)
 
   const state = Blocks.DIAMOND_BLOCK.defaultBlockState()
 

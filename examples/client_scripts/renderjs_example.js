@@ -1,52 +1,58 @@
-// RenderJS 26.1.2 完整示例（KubeJS 客户端脚本）
-// 放置位置：run/kubejs/client_scripts/renderjs_example.js
-// 覆盖：HUD / Screen / 世界渲染 / 物品装饰。
+// RenderJS 26.1.2 complete example (KubeJS client script)
+// Place at: run/kubejs/client_scripts/renderjs_example.js
+// Covers: HUD / Screen / world rendering / item decorations.
 //
-// 颜色是 ARGB 8 位：0xAARRGGBB，必须带 alpha；
-// 6 位颜色（0xRRGGBB）等价于 alpha=0，不会渲染。
+// Colors are 8-digit ARGB: 0xAARRGGBB and must include alpha.
+// A 6-digit color (0xRRGGBB) has alpha = 0 and will not be drawn.
 
 RenderJSEvents.onGuiPreRender(event => {
-  event.fill(6, 6, 168, 46, 0xAA000000)                    // 半透明黑底
-  event.hLine(6, 168, 6, 0xFFFFFFFF)                       // 不透明白线
+  event.fill(6, 6, 168, 46, 0xAA000000)                    // translucent black background
+  event.hLine(6, 168, 6, 0xFFFFFFFF)                       // opaque white line
   event.drawString(Text.ofString('RenderJS 26.1.2'), 10, 12, 0xFFFFFFFF)
   event.drawString(Text.ofString('item HUD'), 10, 26, 0xFF00FFFF)
 })
 
 RenderJSEvents.onScreenPreRender(event => {
-  event.fill(2, 2, 10, 10, 0xFFFF0000)                     // 界面左上角红块
+  event.fill(2, 2, 10, 10, 0xFFFF0000)                     // red square in the top-left corner of any screen
 })
 
 RenderJSEvents.onLevelRender(event => {
-  // 在方块 (0, 64, 0) 上画描边 / 方块；先把方块放在该位置，或改成你想要的坐标
+  // Draw outlines / blocks around block (0, 64, 0); place a block there first or change the coordinates.
   const poseStack = event.getPoseStack()
   event.pushPose()
-  event.transformerCamera(poseStack)                       // 世界坐标 → 相机相对坐标
-  event.transformerToBlockPose(poseStack, new BlockPos(0, 64, 0))
+  event.transformerCamera(poseStack)                       // world coordinates -> camera-relative coordinates
+  event.transformerToXYZ(poseStack, 0, 64, 0)
 
   const state = Blocks.DIAMOND_BLOCK.defaultBlockState()
 
-  // 普通方块：会被地形遮挡
+  // Normal block: occluded by terrain
   event.renderSingleBlock(state, poseStack)
+  event.translate(1, 0, 0)
 
-  // 整体染色：乘到模型所有顶点（包括无 tint 的方块）
+  // Whole-model tint: multiplied into every vertex (including blocks without a tint index)
   event.renderSingleBlock(state, poseStack, 0xFFFF0000)
+  event.translate(1, 0, 0)
 
-  // 穿过地形：使用无深度的 RenderType，永远画在最上层
+  // Through terrain: uses a no-depth RenderType, always drawn on the top layer
   event.renderSingleBlockWithType(state, poseStack, RenderJSRenderType.TOP_LAYER_TARGET)
+  event.translate(1, 0, 0)
 
-  // 染色 + 穿过地形
+  // Tint + through terrain
   event.renderSingleBlock(state, poseStack, 0x80FF0000, RenderJSRenderType.TOP_LAYER_TARGET)
+  event.translate(1, 0, 0)
 
-  // 描边（普通 / 穿过地形 / 指定颜色）
+  // Outlines (normal / through terrain / custom color)
   event.renderHitOutline(state, poseStack)
+  event.translate(1, 0, 0)
   event.renderHitOutlineWithType(state, poseStack, RenderJSRenderType.TOP_LAYER_LINE_TARGET)
+  event.translate(1, 0, 0)
   event.renderHitOutline(state, poseStack, 0xFFFF0000)
 
   event.popPose()
 })
 
 RenderJSEvents.RegisterItemDecorations(event => {
-  // 所有物品右下角绿色角标
+  // Green marker in the bottom-right corner of every item
   event.registerForAllItem(ctx => {
     ctx.fill(ctx.xOffset + 12, ctx.yOffset + 12, ctx.xOffset + 16, ctx.yOffset + 16, 0xFF00FF00)
   })

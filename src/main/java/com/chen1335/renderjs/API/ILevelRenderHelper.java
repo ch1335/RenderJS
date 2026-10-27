@@ -50,6 +50,17 @@ public interface ILevelRenderHelper {
         poseStack.translate(blockPos.getX(), blockPos.getY(), blockPos.getZ());
     }
 
+    @Info(value = "Translates the pose stack to the given coordinates, without allocating a BlockPos.",
+            params = {
+                    @Param(name = "poseStack", value = "Pose stack to transform."),
+                    @Param(name = "x", value = "X coordinate to translate to."),
+                    @Param(name = "y", value = "Y coordinate to translate to."),
+                    @Param(name = "z", value = "Z coordinate to translate to.")
+            })
+    default void transformerToXYZ(PoseStack poseStack, double x, double y, double z) {
+        poseStack.translate(x, y, z);
+    }
+
     @Info(value = "Renders a block model without tinting.",
             params = {
                     @Param(name = "blockState", value = "Block state to render."),

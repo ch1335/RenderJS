@@ -48,7 +48,7 @@ RenderJSEvents.onLevelRender(event => {
   const poseStack = event.getPoseStack()
   event.pushPose()
   event.transformerCamera(poseStack)              // world space -> camera-relative space
-  event.transformerToBlockPose(poseStack, new BlockPos(0, 64, 0))
+  event.transformerToXYZ(poseStack, 0, 64, 0)
   event.renderHitOutline(Blocks.DIAMOND_BLOCK.defaultBlockState(), poseStack)
   event.popPose()
 })
