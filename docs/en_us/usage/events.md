@@ -21,7 +21,7 @@ RenderJSEvents.onGuiPreRender(event => {
 | `registerBlockEntityRender` | block entity renderer registration / script reload | once | register or hot-swap a scripted block entity renderer (see [Entities & Block Entities](entity-and-block-entity.md)) |
 
 > Since 26.1.2 the world has a **single geometry submission pass**; there are no `AFTER_ENTITIES`-style
-> stages anymore. `event.getStage()` always returns `"submit"` (`RenderJSLevelRenderStage.SUBMIT`).
+> stages anymore. `event.getStage()` is kept for compatibility and always returns `"submit"`.
 
 ## GUI events
 

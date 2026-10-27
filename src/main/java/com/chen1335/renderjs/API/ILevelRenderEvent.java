@@ -22,11 +22,6 @@ public interface ILevelRenderEvent extends IRenderJSEvent {
         return Minecraft.getInstance().levelRenderer;
     }
 
-    @Info("Returns the current render stage. MC 26.1.2 has a single submission pass, so this is always \"submit\".")
-    default String getStage() {
-        return "submit";
-    }
-
     @Info("Returns the partial tick of the current frame.")
     default float getPartialTick() {
         return Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(true);

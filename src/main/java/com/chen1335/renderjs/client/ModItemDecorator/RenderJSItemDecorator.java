@@ -39,8 +39,9 @@ public class RenderJSItemDecorator implements IItemDecorator {
                     xOffset,
                     yOffset
             );
+            int depth = RenderJSPoseStackUtil.depth(context.getPoseStack());
             consumers.forEach(consumer -> consumer.accept(context));
-            RenderJSPoseStackUtil.checkBalanced("itemDecoration", context.getPoseStack(), 0);
+            RenderJSPoseStackUtil.checkBalanced("itemDecoration", context.getPoseStack(), depth);
         }
         return true;
     }

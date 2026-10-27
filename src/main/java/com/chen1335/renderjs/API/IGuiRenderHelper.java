@@ -10,7 +10,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import org.joml.Matrix3x2fStack;
 
-import java.awt.Color;
 import java.util.function.Consumer;
 
 /**
@@ -23,10 +22,11 @@ import java.util.function.Consumer;
  * that copy to the extractor before submitting geometry and restores the extractor afterwards.
  */
 @Info("Drawing helpers for HUD and Screen rendering. Only usable from a GUI render event callback.")
-public interface IGuiRenderHelper {
+public interface IGuiRenderHelper extends IColorHelper {
     GuiGraphicsExtractor getGuiGraphics();
 
     Matrix3x2fStack getPoseStack();
+
 
     /**
      * Runs the given drawing action on the extractor with the script controlled matrix applied.
@@ -124,7 +124,7 @@ public interface IGuiRenderHelper {
                     @Param(name = "a", value = "Alpha channel, 0 to 255.")
             })
     default void drawString(Component component, int x, int y, int r, int g, int b, int a) {
-        int color = new Color(r, g, b, a).getRGB();
+        int color = argb(r, g, b, a);
         withPose(guiGraphics -> guiGraphics.text(Minecraft.getInstance().font, component, x, y, color, false));
     }
 
@@ -150,7 +150,7 @@ public interface IGuiRenderHelper {
                     @Param(name = "a", value = "Alpha channel, 0 to 255.")
             })
     default void drawShadowString(Component component, int x, int y, int r, int g, int b, int a) {
-        int color = new Color(r, g, b, a).getRGB();
+        int color = argb(r, g, b, a);
         withPose(guiGraphics -> guiGraphics.text(Minecraft.getInstance().font, component, x, y, color, true));
     }
 
@@ -200,7 +200,7 @@ public interface IGuiRenderHelper {
                     @Param(name = "a", value = "Alpha channel, 0 to 255.")
             })
     default void hLine(int minX, int maxX, int y, int r, int g, int b, int a) {
-        hLine(minX, maxX, y, new Color(r, g, b, a).getRGB());
+        hLine(minX, maxX, y, argb(r, g, b, a));
     }
 
     @Info(value = "Draws a vertical line.",
@@ -233,7 +233,7 @@ public interface IGuiRenderHelper {
                     @Param(name = "a", value = "Alpha channel, 0 to 255.")
             })
     default void vLine(int x, int minY, int maxY, int r, int g, int b, int a) {
-        vLine(x, minY, maxY, new Color(r, g, b, a).getRGB());
+        vLine(x, minY, maxY, argb(r, g, b, a));
     }
 
     @Info(value = "Draws a filled rectangle.",
@@ -260,6 +260,6 @@ public interface IGuiRenderHelper {
                     @Param(name = "a", value = "Alpha channel, 0 to 255.")
             })
     default void fill(int minX, int minY, int maxX, int maxY, int r, int g, int b, int a) {
-        fill(minX, minY, maxX, maxY, new Color(r, g, b, a).getRGB());
+        fill(minX, minY, maxX, maxY, argb(r, g, b, a));
     }
 }

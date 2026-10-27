@@ -227,4 +227,4 @@ Notes:
   RenderType, so draw order is not guaranteed to match call order;
 - `onLevelRender` fires once per frame; `onLivingPreRender/Post` fire once per visible entity;
 - Keep callbacks cheap; derive animated values from partialTick/time instead of doing heavy work;
-- There is no `MultiBufferSource`/immediate-mode API anymore: old `RenderJSRenderSystem` calls are no-ops.
+- There is no `MultiBufferSource`/immediate-mode API anymore: the old immediate-mode render state helpers were removed.

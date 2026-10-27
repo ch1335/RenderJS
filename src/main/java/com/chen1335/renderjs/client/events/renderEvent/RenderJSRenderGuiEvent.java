@@ -35,8 +35,9 @@ public class RenderJSRenderGuiEvent implements ClientKubeEvent, IGuiRenderHelper
             return;
         }
         RenderJSRenderGuiEvent kubeEvent = fromEvent(event);
+        int depth = RenderJSPoseStackUtil.depth(kubeEvent.getPoseStack());
         RenderJSEvents.RENDER_GUI_PRE.post(kubeEvent);
-        RenderJSPoseStackUtil.checkBalanced("onRenderGuiPre", kubeEvent.getPoseStack(), 0);
+        RenderJSPoseStackUtil.checkBalanced("onRenderGuiPre", kubeEvent.getPoseStack(), depth);
     }
 
     @SubscribeEvent
@@ -45,8 +46,9 @@ public class RenderJSRenderGuiEvent implements ClientKubeEvent, IGuiRenderHelper
             return;
         }
         RenderJSRenderGuiEvent kubeEvent = fromEvent(event);
+        int depth = RenderJSPoseStackUtil.depth(kubeEvent.getPoseStack());
         RenderJSEvents.RENDER_GUI_POST.post(kubeEvent);
-        RenderJSPoseStackUtil.checkBalanced("onRenderGuiPost", kubeEvent.getPoseStack(), 0);
+        RenderJSPoseStackUtil.checkBalanced("onRenderGuiPost", kubeEvent.getPoseStack(), depth);
     }
 
     private static RenderJSRenderGuiEvent fromEvent(RenderGuiEvent event) {

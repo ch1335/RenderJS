@@ -22,13 +22,15 @@ import net.neoforged.neoforge.client.event.RegisterRenderPipelinesEvent;
 public final class RenderJSRenderPipelines {
     /**
      * Clone of vanilla {@code ENTITY_CUTOUT_CULL} (used by the cutout block sheet) with depth testing
-     * disabled: the geometry is always drawn on top of terrain.
+     * ignored: the geometry is always drawn on top of terrain. Depth writing stays enabled so later
+     * passes (clouds, translucent geometry, ...) are correctly occluded by the submitted block instead
+     * of overpainting it.
      */
     public static final RenderPipeline BLOCK_NO_DEPTH = RenderPipeline.builder(RenderPipelines.ENTITY_SNIPPET)
             .withLocation(Identifier.fromNamespaceAndPath(RenderJS.MODID, "pipeline/block_no_depth"))
             .withShaderDefine("ALPHA_CUTOUT", 0.1F)
             .withSampler("Sampler1")
-            .withDepthStencilState(new DepthStencilState(CompareOp.ALWAYS_PASS, false))
+            .withDepthStencilState(new DepthStencilState(CompareOp.ALWAYS_PASS, true))
             .build();
 
     /**

@@ -6,9 +6,7 @@ import com.chen1335.renderjs.client.events.ItemDecorationsRegisterEvent;
 import com.chen1335.renderjs.client.events.renderEvent.RegisterBlockEntityRenderEvent;
 import com.chen1335.renderjs.client.renderer.RenderJSBlockEntityRenderer;
 import com.chen1335.renderjs.client.renderer.RenderJSRenderType;
-import com.chen1335.renderjs.kubejs.bindings.RenderJSLevelRenderStage;
 import com.chen1335.renderjs.kubejs.bindings.event.RenderJSEvents;
-import com.chen1335.renderjs.kubejs.client.RenderJSRenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.latvian.mods.kubejs.event.EventGroupRegistry;
 import dev.latvian.mods.kubejs.plugin.KubeJSPlugin;
@@ -71,7 +69,6 @@ public class RenderJSPlugin implements KubeJSPlugin {
     @Override
     public void registerBindings(BindingRegistry bindingRegistry) {
         bindingRegistry.add("RenderJSItemDecoratorHandler", RenderJSItemDecoratorHandler.getInstance());
-        bindingRegistry.add("RenderJSRenderSystem", RenderJSRenderSystem.class);
         bindingRegistry.add("PoseStack", PoseStack.class);
         bindingRegistry.add("Mth", Mth.class);
         bindingRegistry.add("LightCoordsUtil", LightCoordsUtil.class);
@@ -79,6 +76,5 @@ public class RenderJSPlugin implements KubeJSPlugin {
         bindingRegistry.add("GuiGraphicsExtractor", GuiGraphicsExtractor.class);
         bindingRegistry.add("RenderJSBlockEntityRenderer", RenderJSBlockEntityRenderer.class);
         bindingRegistry.add("RenderJSRenderType", RenderJSRenderType.class);
-        bindingRegistry.add("RenderJSLevelRenderStage", RenderJSLevelRenderStage.class);
     }
 }
