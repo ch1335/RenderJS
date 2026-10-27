@@ -1,5 +1,7 @@
 # RenderJS
 
+简体中文 | [English](README.en.md)
+
 一个给 [KubeJS](https://kubejs.com/) 提供渲染能力的 Minecraft 附属模组。
 可以在 KubeJS 客户端脚本里直接绘制 HUD、Screen、世界几何、实体/方块实体叠加层与物品图标装饰。
 适配 Minecraft 26.1.2 / NeoForge 26.1.2.122+ / KubeJS 26.1.2-8.0.7+。
