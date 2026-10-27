@@ -11,7 +11,6 @@ public interface IScreenRenderEvent extends IRenderJSEvent {
     @HideFromJS
     ScreenEvent.Render getEvent();
 
-    @HideFromJS
     default Matrix3x2fStack getPoseStack() {
         return getEvent().getGuiGraphics().pose();
     }

@@ -28,7 +28,6 @@ import org.jetbrains.annotations.Nullable;
  */
 @Info("Drawing helpers for world, entity and block entity rendering. Only usable from a render event callback.")
 public interface ILevelRenderHelper {
-    @HideFromJS
     PoseStack getPoseStack();
 
     @HideFromJS

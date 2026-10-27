@@ -11,7 +11,6 @@ import org.joml.Quaternionf;
  */
 @Info("3D transform helpers for world, entity and block entity rendering. These contexts use PoseStack.")
 public interface ILevelPoseHelper {
-    @HideFromJS
     PoseStack getPoseStack();
 
     @Info(value = "Scales the pose stack in the X and Y axes.",

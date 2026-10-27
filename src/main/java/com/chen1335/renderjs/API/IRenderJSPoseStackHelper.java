@@ -10,7 +10,6 @@ import org.joml.Matrix3x2fStack;
  */
 @Info("2D transform helpers for GUI contexts. The GUI pose stack uses Matrix3x2fStack.")
 public interface IRenderJSPoseStackHelper {
-    @HideFromJS
     Matrix3x2fStack getPoseStack();
 
     @Info(value = "Scales the GUI pose stack in the X and Y axes.",

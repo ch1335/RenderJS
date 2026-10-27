@@ -50,13 +50,11 @@ public class RenderJSRenderLevelEvent implements ClientKubeEvent, ILevelRenderEv
     }
 
     @Override
-    @HideFromJS
     public PoseStack getPoseStack() {
         return event.getPoseStack();
     }
 
     @Override
-    @HideFromJS
     public SubmitNodeCollector getSubmitNodeCollector() {
         return event.getSubmitNodeCollector();
     }
